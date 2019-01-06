@@ -9,7 +9,6 @@ namespace PgsToSrt
 {
     class Program
     {
-        private static ServiceProvider _servicesProvider;
 
         static void Main(string[] args)
         {
@@ -19,7 +18,7 @@ namespace PgsToSrt
             Console.WriteLine($"PgsToSrt {version}");
             Console.WriteLine();
 
-            _servicesProvider = new ServiceCollection()
+            var servicesProvider = new ServiceCollection()
                .AddLogging(builder =>
                {
                    builder.SetMinimumLevel(LogLevel.Trace);
@@ -28,7 +27,7 @@ namespace PgsToSrt
                .AddTransient<Runner>()
                .BuildServiceProvider();
 
-            var runner = _servicesProvider.GetRequiredService<Runner>();
+            var runner = servicesProvider.GetRequiredService<Runner>();
             var values = options as Parsed<CommandLineOptions>;
 
             if (runner.Run(values))
