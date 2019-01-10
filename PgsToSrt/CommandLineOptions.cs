@@ -16,7 +16,7 @@ namespace PgsToSrt
         [Option(HelpText = "Tesseract language to use if multiple languages are available in the tesseract data directory.")]
         public string TesseractLanguage { get; set; }
 
-        [Option(HelpText = "Path of tesseract language data files, by default 'tessdata' in the executable direcotry.")]
+        [Option(HelpText = "Path of tesseract language data files, by default 'tessdata' in the executable directory.")]
         public string TesseractData { get; set; }
     }
 }
