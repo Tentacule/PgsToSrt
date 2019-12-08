@@ -22,11 +22,32 @@ dotnet PgsToSrt.dll [parameters]
 | --tesseractlanguage| Tesseract language to use if multiple languages are available in the tesseract data directory.        |
 | --tesseractdata    | Path of tesseract language data files, by default 'tessdata' in the executable direcotry.             |
 
-Examples
-
+#### Example (Command Line)
+```
 dotnet PgsToSrt.dll --input video1.fr.sup --output video1.fr.srt --tesseractlanguage fra
-
 dotnet PgsToSrt.dll --input video1.mkv --output video1.srt --track 4
+```
+#### Example (Docker)
+```
+docker run -it --rm -v /data:/data \
+           -e INPUT=/data/myImageSubtitle.sup \
+           -e OUTPUT=/data/myTextSubtitle.srt \
+           -e LANGUAGE=eng \
+           segator/pgstosrt
+```
+
+### Build
+To build PgsToSrt.dll execute this commands
+```
+dotnet restore
+dotnet publish -c Release -o out
+#The file is on  PgsToSrt/out/PgsToSrt.dll
+```
+
+To build docker image (for now only for linux)
+```
+docker build -t pgstosrt .
+```
 
 ### Built With
 - LibSE from [Subtitle Edit](https://www.nikse.dk/SubtitleEdit/)
