@@ -33,7 +33,7 @@ docker run -it --rm -v /data:/data \
            -e INPUT=/data/myImageSubtitle.sup \
            -e OUTPUT=/data/myTextSubtitle.srt \
            -e LANGUAGE=eng \
-           segator/pgstosrt
+           tentacule/pgstosrt
 ```
 
 ### Build
