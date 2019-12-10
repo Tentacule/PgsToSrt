@@ -84,7 +84,7 @@ public class PgsOcr
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error: " + e.Message);
+            _logger.LogError(e, "Error: " + e.Message + e.StackTrace);
 
             return false;
         }
@@ -93,16 +93,9 @@ public class PgsOcr
     private string GetText(TesseractEngine engine, int index)
     {
         string result;
-        byte[] tiffBytes;
 
-        using (var tiffStream = new MemoryStream())
         using (var bitmap = GetSubtitleBitmap(index))
-        {
-            bitmap.Save(tiffStream, System.Drawing.Imaging.ImageFormat.Tiff);
-            tiffBytes = ToByteArray(tiffStream);
-        }
-
-        using (var image = Pix.LoadTiffFromMemory(tiffBytes))
+        using (var image = GetPix(bitmap))
         using (var page = engine.Process(image))
         {
             result = page.GetText();
@@ -112,17 +105,22 @@ public class PgsOcr
         return result;
     }
 
+    private static Pix GetPix(Bitmap bitmap)
+    {
+        byte[] pngBytes;
+
+        using (var stream = new MemoryStream())
+        {
+            bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
+            pngBytes = stream.ToArray();
+        }
+
+        return Pix.LoadFromMemory(pngBytes);
+    }
+
     private Bitmap GetSubtitleBitmap(int index)
     {
         return _bluraySubtitles[index].GetBitmap();
     }
 
-    private static byte[] ToByteArray(Stream stream)
-    {
-        stream.Position = 0;
-        var buffer = new byte[stream.Length];
-        for (var totalBytesCopied = 0; totalBytesCopied < stream.Length;)
-            totalBytesCopied += stream.Read(buffer, totalBytesCopied, Convert.ToInt32(stream.Length) - totalBytesCopied);
-        return buffer;
-    }
 }
