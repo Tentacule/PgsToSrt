@@ -191,7 +191,7 @@ namespace InteropDotNet
             var libraries = new List<string>();
             foreach (var method in methods)
             {
-                var libraryName = method.DllImportAttribute.LibraryFileName;
+                var libraryName = method.DllImportAttribute.GetLibraryFileName();
                 if (!libraries.Contains(libraryName))
                     libraries.Add(libraryName);
             }
@@ -225,7 +225,7 @@ namespace InteropDotNet
             foreach (var method in methods)
             {
                 // Preparing
-                var libraryIndex = libraries.IndexOf(method.DllImportAttribute.LibraryFileName);
+                var libraryIndex = libraries.IndexOf(method.DllImportAttribute.GetLibraryFileName());
                 var methodName = method.DllImportAttribute.EntryPoint ?? method.Info.Name;
                 // Load Library Loader
                 ilGen.Emit(OpCodes.Ldarg_1);

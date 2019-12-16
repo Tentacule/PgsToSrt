@@ -22,11 +22,27 @@ namespace InteropDotNet
 
         public bool ThrowOnUnmappableChar;
 
-        public string LibraryFileName { get; private set; }
+        public string LibraryFileNameWindows { get; private set; }
 
-        public RuntimeDllImportAttribute(string libraryFileName)
+        public string LibraryFileNameUnix { get; private set; }
+
+        public RuntimeDllImportAttribute(string libraryFileNameWindows, string libraryFileNameUnix)
         {
-            LibraryFileName = libraryFileName;
+            LibraryFileNameWindows = libraryFileNameWindows;
+            LibraryFileNameUnix = libraryFileNameUnix;
+        }
+
+        public string GetLibraryFileName()
+        {
+            var operatingSystem = SystemManager.GetOperatingSystem();
+            if (operatingSystem == OperatingSystem.Windows)
+            {
+                return LibraryFileNameWindows;
+            }
+            else
+            {
+                return LibraryFileNameUnix;
+            }
         }
     }
 }
