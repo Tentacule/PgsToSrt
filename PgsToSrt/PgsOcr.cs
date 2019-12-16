@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Core.BluRaySup;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
+using PgsToSrt.BluRaySup;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using Tesseract;
@@ -65,8 +66,8 @@ public class PgsOcr
                     var paragraph = new Paragraph
                     {
                         Number = i + 1,
-                        StartTime = new TimeCode(item.StartTime / 90.0),
-                        EndTime = new TimeCode(item.EndTime / 90.0),
+                        StartTime = new Nikse.SubtitleEdit.Core.TimeCode(item.StartTime / 90.0),
+                        EndTime = new Nikse.SubtitleEdit.Core.TimeCode(item.EndTime / 90.0),
                         Text = GetText(engine, i)
                     };
 
@@ -105,20 +106,20 @@ public class PgsOcr
         return result;
     }
 
-    private static Pix GetPix(Bitmap bitmap)
+    private static Pix GetPix(Image<Rgba32> bitmap)
     {
         byte[] pngBytes;
 
         using (var stream = new MemoryStream())
         {
-            bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Bmp);
+            bitmap.SaveAsBmp(stream);
             pngBytes = stream.ToArray();
         }
 
         return Pix.LoadFromMemory(pngBytes);
     }
 
-    private Bitmap GetSubtitleBitmap(int index)
+    private Image<Rgba32> GetSubtitleBitmap(int index)
     {
         return _bluraySubtitles[index].GetBitmap();
     }
