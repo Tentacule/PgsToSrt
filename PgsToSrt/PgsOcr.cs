@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nikse.SubtitleEdit.Core;
-using Nikse.SubtitleEdit.Core.BluRaySup;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
+using PgsToSrt.BluRaySup;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using Tesseract;
@@ -65,8 +66,8 @@ public class PgsOcr
                     var paragraph = new Paragraph
                     {
                         Number = i + 1,
-                        StartTime = new TimeCode(item.StartTime / 90.0),
-                        EndTime = new TimeCode(item.EndTime / 90.0),
+                        StartTime = new Nikse.SubtitleEdit.Core.TimeCode(item.StartTime / 90.0),
+                        EndTime = new Nikse.SubtitleEdit.Core.TimeCode(item.EndTime / 90.0),
                         Text = GetText(engine, i)
                     };
 
@@ -84,7 +85,7 @@ public class PgsOcr
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Error: " + e.Message);
+            _logger.LogError(e, "Error: " + e.Message + e.StackTrace);
 
             return false;
         }
@@ -93,16 +94,9 @@ public class PgsOcr
     private string GetText(TesseractEngine engine, int index)
     {
         string result;
-        byte[] tiffBytes;
 
-        using (var tiffStream = new MemoryStream())
         using (var bitmap = GetSubtitleBitmap(index))
-        {
-            bitmap.Save(tiffStream, System.Drawing.Imaging.ImageFormat.Tiff);
-            tiffBytes = ToByteArray(tiffStream);
-        }
-
-        using (var image = Pix.LoadTiffFromMemory(tiffBytes))
+        using (var image = GetPix(bitmap))
         using (var page = engine.Process(image))
         {
             result = page.GetText();
@@ -112,17 +106,22 @@ public class PgsOcr
         return result;
     }
 
-    private Bitmap GetSubtitleBitmap(int index)
+    private static Pix GetPix(Image<Rgba32> bitmap)
+    {
+        byte[] pngBytes;
+
+        using (var stream = new MemoryStream())
+        {
+            bitmap.SaveAsBmp(stream);
+            pngBytes = stream.ToArray();
+        }
+
+        return Pix.LoadFromMemory(pngBytes);
+    }
+
+    private Image<Rgba32> GetSubtitleBitmap(int index)
     {
         return _bluraySubtitles[index].GetBitmap();
     }
 
-    private static byte[] ToByteArray(Stream stream)
-    {
-        stream.Position = 0;
-        var buffer = new byte[stream.Length];
-        for (var totalBytesCopied = 0; totalBytesCopied < stream.Length;)
-            totalBytesCopied += stream.Read(buffer, totalBytesCopied, Convert.ToInt32(stream.Length) - totalBytesCopied);
-        return buffer;
-    }
 }
