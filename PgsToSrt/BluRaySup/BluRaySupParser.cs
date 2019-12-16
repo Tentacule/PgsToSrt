@@ -17,17 +17,15 @@
  * NOTE: For more info see http://blog.thescorpius.com/index.php/2017/07/15/presentation-graphic-stream-sup-files-bluray-subtitle-format/
  */
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Text;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using Color = SixLabors.ImageSharp.Color;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using Nikse.SubtitleEdit.Core.BluRaySup;
 using Point = SixLabors.Primitives.Point;
 using Rectangle = SixLabors.Primitives.Rectangle;
 using Size = SixLabors.Primitives.Size;
@@ -208,7 +206,6 @@ namespace PgsToSrt.BluRaySup
                     }
                 } while (index < buf.Length);
 
-                // bm.UnlockImage();
                 return bm;
             }
 
@@ -222,12 +219,6 @@ namespace PgsToSrt.BluRaySup
             {
                 if (color.A > 0)
                 {
-                   // int x = index % bmp.Width;
-                   // int y = index / bmp.Width;
-                    //if (x < bmp.Width && y < bmp.Height)
-                    //{
-                    //    bmp[x, y] = color;
-                    //}
                     bmp[index] = color;
                 }
             }
@@ -270,34 +261,23 @@ namespace PgsToSrt.BluRaySup
                     return SupDecoder.DecodeImage(PcsObjects[0], BitmapObjects[0], PaletteInfos);
 
                 var r = Rectangle.Empty;
-                for (int ioIndex = 0; ioIndex < PcsObjects.Count; ioIndex++)
+                for (var ioIndex = 0; ioIndex < PcsObjects.Count; ioIndex++)
                 {
                     var ioRect = new Rectangle(PcsObjects[ioIndex].Origin, BitmapObjects[ioIndex][0].Size);
                     r = r.IsEmpty ? ioRect : Rectangle.Union(r, ioRect);
                 }
 
-                var mergedBmp = new Image<Rgba32>(r.Width, r.Height); //Bitmap(r.Width, r.Height, PixelFormat.Format32bppArgb);
+                var mergedBmp = new Image<Rgba32>(r.Width, r.Height);
                 for (var ioIndex = 0; ioIndex < PcsObjects.Count; ioIndex++)
                 {
                     var offset = PcsObjects[ioIndex].Origin - new Size(r.Location);
                     using (var singleBmp = SupDecoder.DecodeImage(PcsObjects[ioIndex], BitmapObjects[ioIndex], PaletteInfos))
                     {
-                        var position = new Point() {X = offset.X, Y = offset.Y};
-                        mergedBmp.Mutate(b => b.DrawImage(singleBmp, position, 0));
-                        // gSideBySide.DrawImage(singleBmp, offset.X, offset.Y);
+                        mergedBmp.Mutate(b => b.DrawImage(singleBmp, offset, 0));
                     }
-
-
-                    //using (var gSideBySide = Graphics.FromImage(mergedBmp))
-                    //{
-                    //    gSideBySide.DrawImage(singleBmp, offset.X, offset.Y);
-                    //}
                 }
                 return mergedBmp;
             }
-
-            public TimeCode StartTimeCode => new TimeCode(StartTime / 90.0);
-            public TimeCode EndTimeCode => new TimeCode(EndTime / 90.0);
         }
 
         public class PdsData
