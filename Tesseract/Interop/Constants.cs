@@ -10,8 +10,8 @@ namespace Tesseract.Interop
         public const string LeptonicaDllNameWindows = "liblept1753";
         public const string TesseractDllNameWindows = "libtesseract3052";
 
-        public const string LeptonicaDllNameUnix = "liblept";
-        public const string TesseractDllNameUnix = "libtesseract";
+        public const string LeptonicaDllNameUnix = "liblept.so.5";
+        public const string TesseractDllNameUnix = "libtesseract.so.3";
         
         // tesseract uses an int to represent true false values.
         public const int TRUE = 1;
