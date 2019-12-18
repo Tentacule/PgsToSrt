@@ -1,31 +1,28 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using Tesseract.Interop;
 
 namespace Tesseract
 {
-	public unsafe class PixData
-	{
-		public Pix Pix { get; private set; }
+    public unsafe class PixData
+    {
+        public Pix Pix { get; private set; }
 
-		
-		internal PixData(Pix pix)
-		{		
+
+        internal PixData(Pix pix)
+        {
             Pix = pix;
             Data = Interop.LeptonicaApi.Native.pixGetData(Pix.Handle);
             WordsPerLine = Interop.LeptonicaApi.Native.pixGetWpl(Pix.Handle);
-		}
-		
-		/// <summary>
-		/// Pointer to the data.
-		/// </summary>
-		public IntPtr Data { get; private set; }
-		
-		/// <summary>
-		/// Number of 32-bit words per line. 
-		/// </summary>
-		public int WordsPerLine { get; private set; }
+        }
+
+        /// <summary>
+        /// Pointer to the data.
+        /// </summary>
+        public IntPtr Data { get; private set; }
+
+        /// <summary>
+        /// Number of 32-bit words per line. 
+        /// </summary>
+        public int WordsPerLine { get; private set; }
 
         /// <summary>
         /// Swaps the bytes on little-endian platforms within a word; bytes 0 and 3 swapped, and bytes `1 and 2 are swapped.
@@ -56,10 +53,10 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static uint GetDataBit(uint* data, int index)
-		{
-			return (*(data + ((index) >> 5)) >> (31 - ((index) & 31))) & 1;			
-		}
+        public static uint GetDataBit(uint* data, int index)
+        {
+            return (*(data + ((index) >> 5)) >> (31 - ((index) & 31))) & 1;
+        }
 
 
         /// <summary>
@@ -68,12 +65,12 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void SetDataBit(uint* data, int index, uint value)
-		{
-			uint* wordPtr = data + ((index) >> 5);
+        public static void SetDataBit(uint* data, int index, uint value)
+        {
+            uint* wordPtr = data + ((index) >> 5);
             *wordPtr &= ~(0x80000000 >> ((index) & 31));
-            *wordPtr |= (value << (31 - ((index) & 31)));		
-		}
+            *wordPtr |= (value << (31 - ((index) & 31)));
+        }
 
 
         /// <summary>
@@ -82,10 +79,10 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static uint GetDataDIBit(uint* data, int index)
-		{
-			return (*(data + ((index) >> 4)) >> (2 * (15 - ((index) & 15)))) & 3;	
-		}
+        public static uint GetDataDIBit(uint* data, int index)
+        {
+            return (*(data + ((index) >> 4)) >> (2 * (15 - ((index) & 15)))) & 3;
+        }
 
 
 
@@ -95,12 +92,12 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void SetDataDIBit(uint* data, int index, uint value)
-		{
-			uint* wordPtr = data + ((index) >> 4);
+        public static void SetDataDIBit(uint* data, int index, uint value)
+        {
+            uint* wordPtr = data + ((index) >> 4);
             *wordPtr &= ~(0xc0000000 >> (2 * ((index) & 15)));
-            *wordPtr |= (((value) & 3) << (30 - 2 * ((index) & 15)));			
-		}
+            *wordPtr |= (((value) & 3) << (30 - 2 * ((index) & 15)));
+        }
 
 
         /// <summary>
@@ -109,10 +106,10 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static uint GetDataQBit(uint* data, int index)
-		{
-			return (*(data + ((index) >> 3)) >> (4 * (7 - ((index) & 7)))) & 0xf;			
-		}
+        public static uint GetDataQBit(uint* data, int index)
+        {
+            return (*(data + ((index) >> 3)) >> (4 * (7 - ((index) & 7)))) & 0xf;
+        }
 
 
         /// <summary>
@@ -121,12 +118,12 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void SetDataQBit(uint* data, int index, uint value)
-		{
-			uint* wordPtr = data + ((index) >> 3);
+        public static void SetDataQBit(uint* data, int index, uint value)
+        {
+            uint* wordPtr = data + ((index) >> 3);
             *wordPtr &= ~(0xf0000000 >> (4 * ((index) & 7)));
-            *wordPtr |= (((value) & 15) << (28 - 4 * ((index) & 7)));		
-		}
+            *wordPtr |= (((value) & 15) << (28 - 4 * ((index) & 7)));
+        }
 
 
         /// <summary>
@@ -135,17 +132,20 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static uint GetDataByte(uint* data, int index)
-		{
-			// Must do direct size comparison to detect x64 process, since in this will be jited out and results in a lot faster code (e.g. 6x faster for image conversion)
-			if(IntPtr.Size == 8) {
-        		return *((byte*)((ulong)((byte*)data + index) ^ 3));
-			} else {
-            	return *((byte*)((uint)((byte*)data + index) ^ 3));
-			}
-			// Architecture types that are NOT little edian are not currently supported
+        public static uint GetDataByte(uint* data, int index)
+        {
+            // Must do direct size comparison to detect x64 process, since in this will be jited out and results in a lot faster code (e.g. 6x faster for image conversion)
+            if (IntPtr.Size == 8)
+            {
+                return *((byte*)((ulong)((byte*)data + index) ^ 3));
+            }
+            else
+            {
+                return *((byte*)((uint)((byte*)data + index) ^ 3));
+            }
+            // Architecture types that are NOT little edian are not currently supported
             //return *((byte*)data + index);  
-		}
+        }
 
 
         /// <summary>
@@ -154,18 +154,21 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void SetDataByte(uint* data, int index, uint value)
-		{			
-			// Must do direct size comparison to detect x64 process, since in this will be jited out and results in a lot faster code (e.g. 6x faster for image conversion)
-			if(IntPtr.Size == 8) {
-				*(byte*)((ulong)((byte*)data + index) ^ 3) = (byte)value;
-			} else {
-			 	*(byte*)((uint)((byte*)data + index) ^ 3) = (byte)value;
-			}
-			
-			// Architecture types that are NOT little edian are not currently supported
-			// *((byte*)data + index) =  (byte)value;
-		}
+        public static void SetDataByte(uint* data, int index, uint value)
+        {
+            // Must do direct size comparison to detect x64 process, since in this will be jited out and results in a lot faster code (e.g. 6x faster for image conversion)
+            if (IntPtr.Size == 8)
+            {
+                *(byte*)((ulong)((byte*)data + index) ^ 3) = (byte)value;
+            }
+            else
+            {
+                *(byte*)((uint)((byte*)data + index) ^ 3) = (byte)value;
+            }
+
+            // Architecture types that are NOT little edian are not currently supported
+            // *((byte*)data + index) =  (byte)value;
+        }
 
 
         /// <summary>
@@ -174,17 +177,20 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static uint GetDataTwoByte(uint* data, int index)
-		{	
-			// Must do direct size comparison to detect x64 process, since in this will be jited out and results in a lot faster code (e.g. 6x faster for image conversion)
-			if(IntPtr.Size == 8) {
+        public static uint GetDataTwoByte(uint* data, int index)
+        {
+            // Must do direct size comparison to detect x64 process, since in this will be jited out and results in a lot faster code (e.g. 6x faster for image conversion)
+            if (IntPtr.Size == 8)
+            {
                 return *(ushort*)((ulong)((ushort*)data + index) ^ 2);
-			} else {
+            }
+            else
+            {
                 return *(ushort*)((uint)((ushort*)data + index) ^ 2);
-			}
-			// Architecture types that are NOT little edian are not currently supported
+            }
+            // Architecture types that are NOT little edian are not currently supported
             // return *((ushort*)data + index);
-		}
+        }
 
 
         /// <summary>
@@ -193,17 +199,20 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void SetDataTwoByte(uint* data, int index, uint value)
-		{
-			// Must do direct size comparison to detect x64 process, since in this will be jited out and results in a lot faster code (e.g. 6x faster for image conversion)
-			if(IntPtr.Size == 8) {
-    			*(ushort*)((ulong)((ushort*)data + index) ^ 2) = (ushort)value;
-			} else {
-           		*(ushort*)((uint)((ushort*)data + index) ^ 2) = (ushort)value;
-			}
-			// Architecture types that are NOT little edian are not currently supported
+        public static void SetDataTwoByte(uint* data, int index, uint value)
+        {
+            // Must do direct size comparison to detect x64 process, since in this will be jited out and results in a lot faster code (e.g. 6x faster for image conversion)
+            if (IntPtr.Size == 8)
+            {
+                *(ushort*)((ulong)((ushort*)data + index) ^ 2) = (ushort)value;
+            }
+            else
+            {
+                *(ushort*)((uint)((ushort*)data + index) ^ 2) = (ushort)value;
+            }
+            // Architecture types that are NOT little edian are not currently supported
             //*((ushort*)data + index) = (ushort)value;
-		}
+        }
 
 
         /// <summary>
@@ -212,10 +221,10 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static uint GetDataFourByte(uint* data, int index)
-		{
-         	return *(data + index);		
-		}
+        public static uint GetDataFourByte(uint* data, int index)
+        {
+            return *(data + index);
+        }
 
 
         /// <summary>
@@ -224,9 +233,9 @@ namespace Tesseract
 #if Net45
       	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-		public static void SetDataFourByte(uint* data, int index, uint value)
-		{
-			*(data + index) = value;			
-		}		
-	}
+        public static void SetDataFourByte(uint* data, int index, uint value)
+        {
+            *(data + index) = value;
+        }
+    }
 }

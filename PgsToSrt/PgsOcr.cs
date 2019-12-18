@@ -66,8 +66,8 @@ public class PgsOcr
                     var paragraph = new Paragraph
                     {
                         Number = i + 1,
-                        StartTime = new Nikse.SubtitleEdit.Core.TimeCode(item.StartTime / 90.0),
-                        EndTime = new Nikse.SubtitleEdit.Core.TimeCode(item.EndTime / 90.0),
+                        StartTime = new TimeCode(item.StartTime / 90.0),
+                        EndTime = new TimeCode(item.EndTime / 90.0),
                         Text = GetText(engine, i)
                     };
 
