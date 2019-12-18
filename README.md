@@ -36,6 +36,10 @@ docker run -it --rm -v /data:/data \
            tentacule/pgstosrt
 ```
 
+### Dependencies
+- Windows : none, tesseract/leptonica libraries are included in the release package.
+- Linux   : libtesseract3 liblept5
+
 ### Build
 To build PgsToSrt.dll execute this commands
 ```
@@ -53,3 +57,4 @@ docker build -t pgstosrt .
 - LibSE from [Subtitle Edit](https://www.nikse.dk/SubtitleEdit/)
 - [Tesseract .net wrapper](https://github.com/charlesw/tesseract/)
 - [CommandLineParser](https://github.com/commandlineparser/commandline) 
+- [SixLabors ImageSharp](https://github.com/SixLabors/ImageSharp)
