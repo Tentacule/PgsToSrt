@@ -57,13 +57,6 @@ namespace InteropDotNet
 
         public string FixUpLibraryName(string fileName)
         {
-            if (!string.IsNullOrEmpty(fileName))
-            {
-                if (!fileName.EndsWith(".so", StringComparison.OrdinalIgnoreCase))
-                    fileName += ".so";
-                if (!fileName.StartsWith("lib", StringComparison.OrdinalIgnoreCase))
-                    fileName = "lib" + fileName;
-            }
             return fileName;
         }
 

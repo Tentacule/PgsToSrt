@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Tesseract
+﻿namespace Tesseract
 {
     public enum ImageFormat : int
     {
@@ -15,7 +11,7 @@ namespace Tesseract
         TiffRle = 6,
         TiffG3 = 7,
         TiffG4 = 8,
-        TiffLzw =  9,
+        TiffLzw = 9,
         TifZip = 10,
         Pnm = 11,
         Ps = 12,
@@ -23,7 +19,6 @@ namespace Tesseract
         Jp2 = 14,
         WebP = 15,
         Lpdf = 16,
-        Default = 17,
-        Spix = 18
+        Default = 17
     }
 }

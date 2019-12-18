@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Security;
 using Tesseract.Internal;
 
 namespace Tesseract
@@ -20,73 +18,6 @@ namespace Tesseract
         private HandleRef handle;
 
         private int processCount = 0;
-
-        /// <summary>
-        /// Creates a new instance of <see cref="TesseractEngine"/> using the <see cref="EngineMode.Default"/> mode.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The <paramref name="datapath"/> parameter should point to the directory that contains the 'tessdata' folder
-        /// for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath should
-        /// be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment variable if defined,
-        /// effectively ignoring the value of <paramref name="datapath"/> parameter.
-        /// </para>
-        /// </remarks>
-        /// <param name="datapath">The path to the parent directory that contains the 'tessdata' directory, ignored if the <c>TESSDATA_PREFIX</c> environment variable is defined.</param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
-        public TesseractEngine(string datapath, string language)
-            : this(datapath, language, EngineMode.Default, new string[0], new Dictionary<string, object>(), false)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="TesseractEngine"/> with the specified <paramref name="configFile"/>
-        /// using the <see cref="EngineMode.Default">Default Engine Mode</see>.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The <paramref name="datapath"/> parameter should point to the directory that contains the 'tessdata' folder
-        /// for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath should
-        /// be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment variable if defined,
-        /// effectively ignoring the value of <paramref name="datapath"/> parameter.
-        /// </para>
-        /// <para>
-        /// Note: That the config files MUST be encoded without the BOM using unix end of line characters.
-        /// </para>
-        /// </remarks>
-        /// <param name="datapath">The path to the parent directory that contains the 'tessdata' directory, ignored if the <c>TESSDATA_PREFIX</c> environment variable is defined.</param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
-        /// <param name="configFile">
-        /// An optional tesseract configuration file that is encoded using UTF8 without BOM
-        /// with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
-        /// </param>
-        public TesseractEngine(string datapath, string language, string configFile)
-            : this(datapath, language, EngineMode.Default, configFile != null ? new[] { configFile } : new string[0], new Dictionary<string, object>(), false)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="TesseractEngine"/> with the specified <paramref name="configFiles"/>
-        /// using the <see cref="EngineMode.Default">Default Engine Mode</see>.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The <paramref name="datapath"/> parameter should point to the directory that contains the 'tessdata' folder
-        /// for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath should
-        /// be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment variable if defined,
-        /// effectively ignoring the value of <paramref name="datapath"/> parameter.
-        /// </para>
-        /// </remarks>
-        /// <param name="datapath">The path to the parent directory that contains the 'tessdata' directory, ignored if the <c>TESSDATA_PREFIX</c> environment variable is defined.</param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
-        /// <param name="configFiles">
-        /// An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
-        /// with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
-        /// </param>
-        public TesseractEngine(string datapath, string language, IEnumerable<string> configFiles)
-            : this(datapath, language, EngineMode.Default, configFiles, new Dictionary<string, object>(), false)
-        {
-        }
 
         /// <summary>
         /// Creates a new instance of <see cref="TesseractEngine"/> with the specified <paramref name="engineMode"/>.
@@ -106,56 +37,7 @@ namespace Tesseract
             : this(datapath, language, engineMode, new string[0], new Dictionary<string, object>(), false)
         {
         }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="TesseractEngine"/> with the specified <paramref name="engineMode"/> and <paramref name="configFile"/>.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The <paramref name="datapath"/> parameter should point to the directory that contains the 'tessdata' folder
-        /// for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath should
-        /// be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment variable if defined,
-        /// effectively ignoring the value of <paramref name="datapath"/> parameter.
-        /// </para>
-        /// <para>
-        /// Note: That the config files MUST be encoded without the BOM using unix end of line characters.
-        /// </para>
-        /// </remarks>
-        /// <param name="datapath">The path to the parent directory that contains the 'tessdata' directory, ignored if the <c>TESSDATA_PREFIX</c> environment variable is defined.</param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
-        /// <param name="engineMode">The <see cref="EngineMode"/> value to use when initialising the tesseract engine.</param>
-        /// <param name="configFile">
-        /// An optional tesseract configuration file that is encoded using UTF8 without BOM
-        /// with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
-        /// </param>
-        public TesseractEngine(string datapath, string language, EngineMode engineMode, string configFile)
-            : this(datapath, language, engineMode, configFile != null ? new[] { configFile } : new string[0], new Dictionary<string, object>(), false)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new instance of <see cref="TesseractEngine"/> with the specified <paramref name="engineMode"/> and <paramref name="configFiles"/>.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The <paramref name="datapath"/> parameter should point to the directory that contains the 'tessdata' folder
-        /// for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath should
-        /// be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment variable if defined,
-        /// effectively ignoring the value of <paramref name="datapath"/> parameter.
-        /// </para>
-        /// </remarks>
-        /// <param name="datapath">The path to the parent directory that contains the 'tessdata' directory, ignored if the <c>TESSDATA_PREFIX</c> environment variable is defined.</param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
-        /// <param name="engineMode">The <see cref="EngineMode"/> value to use when initialising the tesseract engine.</param>
-        /// <param name="configFiles">
-        /// An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
-        /// with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
-        /// </param>
-        public TesseractEngine(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles)
-            : this(datapath, language, engineMode, configFiles, new Dictionary<string, object>(), false)
-        {
-        }
-
+        
         /// <summary>
         /// Creates a new instance of <see cref="TesseractEngine"/> with the specified <paramref name="engineMode"/> and <paramref name="configFiles"/>.
         /// </summary>
@@ -183,19 +65,7 @@ namespace Tesseract
 
             Initialise(datapath, language, engineMode, configFiles, initialOptions, setOnlyNonDebugVariables);
         }
-
-        public string Version
-        {
-            get
-            {
-                // Get version doesn't work for x64, might be compilation related for now just
-                // return constant so we don't crash.
-                return TesseractVersion;
-
-                // return Interop.TessApi.Native.GetVersion();
-            }
-        }
-
+        
         internal HandleRef Handle
         {
             get { return handle; }
@@ -359,18 +229,18 @@ namespace Tesseract
             }
         }
 
-        private string GetTessDataPrefix()
-        {
-            try
-            {
-                return Environment.GetEnvironmentVariable("TESSDATA_PREFIX");
-            }
-            catch (SecurityException e)
-            {
-                trace.TraceEvent(TraceEventType.Error, 0, "Failed to detect if the environment variable 'TESSDATA_PREFIX' is set: {0}", e.Message);
-                return null;
-            }
-        }
+        //private string GetTessDataPrefix()
+        //{
+        //    try
+        //    {
+        //        return Environment.GetEnvironmentVariable("TESSDATA_PREFIX");
+        //    }
+        //    catch (SecurityException e)
+        //    {
+        //        trace.TraceEvent(TraceEventType.Error, 0, "Failed to detect if the environment variable 'TESSDATA_PREFIX' is set: {0}", e.Message);
+        //        return null;
+        //    }
+        //}
 
         private void Initialise(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialValues, bool setOnlyNonDebugVariables)
         {
@@ -439,58 +309,6 @@ namespace Tesseract
             set;
         }
 
-        public bool SetDebugVariable(string name, string value)
-        {
-            return Interop.TessApi.BaseApiSetDebugVariable(handle, name, value) != 0;
-        }
-
-        /// <summary>
-        /// Sets the value of a string variable.
-        /// </summary>
-        /// <param name="name">The name of the variable.</param>
-        /// <param name="value">The new value of the variable.</param>
-        /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
-        public bool SetVariable(string name, string value)
-        {
-            return Interop.TessApi.BaseApiSetVariable(handle, name, value) != 0;
-        }
-
-        /// <summary>
-        /// Sets the value of a boolean variable.
-        /// </summary>
-        /// <param name="name">The name of the variable.</param>
-        /// <param name="value">The new value of the variable.</param>
-        /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
-        public bool SetVariable(string name, bool value)
-        {
-            var strEncodedValue = value ? "TRUE" : "FALSE";
-            return Interop.TessApi.BaseApiSetVariable(handle, name, strEncodedValue) != 0;
-        }
-
-        /// <summary>
-        /// Sets the value of a integer variable.
-        /// </summary>
-        /// <param name="name">The name of the variable.</param>
-        /// <param name="value">The new value of the variable.</param>
-        /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
-        public bool SetVariable(string name, int value)
-        {
-            var strEncodedValue = value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
-            return Interop.TessApi.BaseApiSetVariable(handle, name, strEncodedValue) != 0;
-        }
-
-        /// <summary>
-        /// Sets the value of a double variable.
-        /// </summary>
-        /// <param name="name">The name of the variable.</param>
-        /// <param name="value">The new value of the variable.</param>
-        /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
-        public bool SetVariable(string name, double value)
-        {
-            var strEncodedValue = value.ToString("R", CultureInfo.InvariantCulture.NumberFormat);
-            return Interop.TessApi.BaseApiSetVariable(handle, name, strEncodedValue) != 0;
-        }
-
         /// <summary>
         /// Attempts to retrieve the value for a boolean variable.
         /// </summary>
@@ -510,50 +328,6 @@ namespace Tesseract
                 value = false;
                 return false;
             }
-        }
-
-        /// <summary>
-        /// Attempts to retrieve the value for a double variable.
-        /// </summary>
-        /// <param name="name">The name of the variable.</param>
-        /// <param name="value">The current value of the variable.</param>
-        /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
-        public bool TryGetDoubleVariable(string name, out double value)
-        {
-            return Interop.TessApi.Native.BaseApiGetDoubleVariable(handle, name, out value) != 0;
-        }
-
-        /// <summary>
-        /// Attempts to retrieve the value for an integer variable.
-        /// </summary>
-        /// <param name="name">The name of the variable.</param>
-        /// <param name="value">The current value of the variable.</param>
-        /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
-        public bool TryGetIntVariable(string name, out int value)
-        {
-            return Interop.TessApi.Native.BaseApiGetIntVariable(handle, name, out value) != 0;
-        }
-
-        /// <summary>
-        /// Attempts to retrieve the value for a string variable.
-        /// </summary>
-        /// <param name="name">The name of the variable.</param>
-        /// <param name="value">The current value of the variable.</param>
-        /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
-        public bool TryGetStringVariable(string name, out string value)
-        {
-            value = Interop.TessApi.BaseApiGetStringVariable(handle, name);
-            return value != null;
-        }
-
-        /// <summary>
-        /// Attempts to print the variables to the file.
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        public bool TryPrintVariablesToFile(string filename)
-        {
-            return Interop.TessApi.Native.BaseApiPrintVariablesToFile(handle, filename) != 0;
         }
 
         #endregion Config
