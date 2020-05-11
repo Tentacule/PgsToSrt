@@ -1,4 +1,5 @@
 ﻿using System;
+using Tesseract.Interop;
 
 namespace Tesseract
 {
@@ -10,8 +11,8 @@ namespace Tesseract
         internal PixData(Pix pix)
         {
             Pix = pix;
-            Data = Interop.LeptonicaApi.Native.pixGetData(Pix.Handle);
-            WordsPerLine = Interop.LeptonicaApi.Native.pixGetWpl(Pix.Handle);
+            Data = TessApi.Leptonica.pixGetData(Pix.Handle);
+            WordsPerLine = TessApi.Leptonica.pixGetWpl(Pix.Handle);
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace Tesseract
         /// </remarks>
         public void EndianByteSwap()
         {
-            Interop.LeptonicaApi.Native.pixEndianByteSwap(Pix.Handle);
+            TessApi.Leptonica.pixEndianByteSwap(Pix.Handle);
         }
 
 #if Net45

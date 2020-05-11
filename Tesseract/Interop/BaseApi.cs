@@ -1,9 +1,9 @@
-﻿using InteropDotNet;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Tesseract.Internal;
+using Tncl.NativeLoader;
 
 namespace Tesseract.Interop
 {
@@ -17,15 +17,16 @@ namespace Tesseract.Interop
     /// </remarks>
     public interface ITessApiSignatures
     {
-
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIClear")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIClear")]
         void BaseAPIClear(HandleRef handle);
 
         /// <summary>
         /// Creates a new BaseAPI instance
         /// </summary>
         /// <returns></returns>
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPICreate")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPICreate")]
         IntPtr BaseApiCreate();
 
         // Base API
@@ -33,58 +34,325 @@ namespace Tesseract.Interop
         /// Deletes a base api instance.
         /// </summary>
         /// <returns></returns>
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDelete")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDelete")]
         void BaseApiDelete(HandleRef ptr);
 
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetBoolVariable")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetBoolVariable")]
         int BaseApiGetBoolVariable(HandleRef handle, string name, out int value);
 
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetThresholdedImage")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetThresholdedImage")]
         IntPtr BaseAPIGetThresholdedImage(HandleRef handle);
 
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUTF8Text")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUTF8Text")]
         IntPtr BaseAPIGetUTF8TextInternal(HandleRef handle);
 
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit4")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit4")]
         int BaseApiInit(HandleRef handle, string datapath, string language, int mode,
                                       string[] configs, int configs_size,
                                       string[] vars_vec, string[] vars_values, UIntPtr vars_vec_size,
                                       bool set_only_non_debug_params);
 
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIRecognize")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIRecognize")]
         int BaseApiRecognize(HandleRef handle, HandleRef monitor);
 
         // image analysis
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetImage2")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetImage2")]
         void BaseApiSetImage(HandleRef handle, HandleRef pixHandle);
 
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetInputName")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetInputName")]
         void BaseApiSetInputName(HandleRef handle, string value);
 
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetPageSegMode")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetPageSegMode")]
         void BaseAPISetPageSegMode(HandleRef handle, PageSegMode mode);
-
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetRectangle")]
+       
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetRectangle")]
         void BaseApiSetRectangle(HandleRef handle, int left, int top, int width, int height);
 
-        [RuntimeDllImport(Constants.TesseractDllNameWindows, Constants.TesseractDllNameUnix, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteText")]
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteText")]
         void DeleteText(IntPtr textPtr);
 
     }
 
-    internal static class TessApi
+    public interface ILeptonicaApiSignatures
     {
+        #region Pix
 
-        private static ITessApiSignatures native;
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixCreate")]
+        unsafe IntPtr pixCreate(int width, int height, int depth);
 
-        public static ITessApiSignatures Native
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixClone")]
+        unsafe IntPtr pixClone(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixDestroy")]
+        void pixDestroy(ref IntPtr pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixEqual")]
+        int pixEqual(HandleRef pix1, HandleRef pix2, out int same);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetWidth")]
+        int pixGetWidth(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetHeight")]
+        int pixGetHeight(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetDepth")]
+        int pixGetDepth(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetXRes")]
+        int pixGetXRes(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetYRes")]
+        int pixGetYRes(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetWpl")]
+        int pixGetWpl(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixSetXRes")]
+        int pixSetXRes(HandleRef pix, int xres);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixSetYRes")]
+        int pixSetYRes(HandleRef pix, int yres);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetData")]
+        IntPtr pixGetData(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixEndianByteSwap")]
+        int pixEndianByteSwap(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixReadMem")]
+        unsafe IntPtr pixReadMem(byte* data, int length);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixWrite")]
+        int pixWrite(string filename, HandleRef handle, ImageFormat format);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetColormap")]
+        IntPtr pixGetColormap(HandleRef pix);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixSetColormap")]
+        int pixSetColormap(HandleRef pix, HandleRef pixCmap);
+
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixDestroyColormap")]
+        int pixDestroyColormap(HandleRef pix);
+
+        #endregion
+
+        #region Color map
+
+        // Color map creation and deletion
+
+        /// <summary>
+        /// Creates a new colormap with the specified <paramref name="depth"/>.
+        /// </summary>
+        /// <param name="depth">The depth of the pix in bpp, can be 2, 4, or 8</param>
+        /// <returns>The pointer to the color map, or null on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapCreate")]
+        IntPtr pixcmapCreate(int depth);
+
+        /// <summary>
+        /// Creates a new colormap of the specified <paramref name="depth"/> with random colors where the first color can optionally be set to black, and the last optionally set to white.
+        /// </summary>
+        /// <param name="depth">The depth of the pix in bpp, can be 2, 4, or 8</param>
+        /// <param name="hasBlack">If set to 1 the first color will be black.</param>
+        /// <param name="hasWhite">If set to 1 the last color will be white.</param>
+        /// <returns>The pointer to the color map, or null on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapCreateRandom")]
+        IntPtr pixcmapCreateRandom(int depth, int hasBlack, int hasWhite);
+
+        /// <summary>
+        /// Creates a new colormap of the specified <paramref name="depth"/> with equally spaced gray color values. 
+        /// </summary>
+        /// <param name="depth">The depth of the pix in bpp, can be 2, 4, or 8</param>
+        /// <param name="levels">The number of levels (must be between 2 and 2^<paramref name="depth"/></param>
+        /// <returns>The pointer to the colormap, or null on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapCreateLinear")]
+        IntPtr pixcmapCreateLinear(int depth, int levels);
+
+        /// <summary>
+        /// Destorys and cleans up any memory used by the color map.
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance, set to null on success.</param>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapDestroy")]
+        void pixcmapDestroy(ref IntPtr cmap);
+
+        /// <summary>
+        /// Gets the number of color entries in the color map.
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <returns>Returns the number of color entries in the color map, or 0 on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapGetCount")]
+        int pixcmapGetCount(HandleRef cmap);
+
+        /// <summary>
+        /// Gets the number of free color entries in the color map.
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <returns>Returns the number of free color entries in the color map, or 0 on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapGetFreeCount")]
+        int pixcmapGetFreeCount(HandleRef cmap);
+
+
+        /// <returns>Returns color maps depth, or 0 on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapGetDepth")]
+        int pixcmapGetDepth(HandleRef cmap);
+
+        /// <summary>
+        /// Removes all colors from the color map by setting the count to zero.
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <returns>Returns 0 if OK, 1 on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapClear")]
+        int pixcmapClear(HandleRef cmap);
+
+        /// <summary>
+        /// Adds the color to the pix color map if their is room.
+        /// </summary>
+        /// <returns>Returns 0 if OK, 1 on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapAddColor")]
+        int pixcmapAddColor(HandleRef cmap, int redValue, int greenValue, int blueValue);
+
+        /// <summary>
+        /// Adds the specified color if it doesn't already exist, returning the colors index in the data array.
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <param name="redValue">The red value</param>
+        /// <param name="greenValue">The green value</param>
+        /// <param name="blueValue">The blue value</param>
+        /// <param name="colorIndex">The index of the new color if it was added, or the existing color if it already existed.</param>
+        /// <returns>Returns 0 for success, 1 for error, 2 for not enough space.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapAddNewColor")]
+        int pixcmapAddNewColor(HandleRef cmap, int redValue, int greenValue, int blueValue, out int colorIndex);
+
+        /// <summary>
+        /// Adds the specified color if it doesn't already exist, returning the color's index in the data array.
+        /// </summary>
+        /// <remarks>
+        /// If the color doesn't exist and there is not enough room to add a new color return the nearest color.
+        /// </remarks>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <param name="redValue">The red value</param>
+        /// <param name="greenValue">The green value</param>
+        /// <param name="blueValue">The blue value</param>
+        /// <param name="colorIndex">The index of the new color if it was added, or the existing color if it already existed.</param>
+        /// <returns>Returns 0 for success, 1 for error, 2 for not enough space.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapAddNearestColor")]
+        int pixcmapAddNearestColor(HandleRef cmap, int redValue, int greenValue, int blueValue, out int colorIndex);
+
+        /// <summary>
+        /// Checks if the color already exists or if their is enough room to add it.
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <param name="redValue">The red value</param>
+        /// <param name="greenValue">The green value</param>
+        /// <param name="blueValue">The blue value</param>
+        /// <param name="usable">Returns 1 if usable; 0 if not.</param>
+        /// <returns>Returns 0 if OK, 1 on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapUsableColor")]
+        int pixcmapUsableColor(HandleRef cmap, int redValue, int greenValue, int blueValue, out int usable);
+
+        /// <summary>
+        /// Adds a color (black\white) if not already there returning it's index through <paramref name="index"/>.
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <param name="color">The color to add (0 for black; 1 for white)</param>
+        /// <param name="index">The index of the color.</param>
+        /// <returns>Returns 0 if OK; 1 on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapAddBlackOrWhite")]
+        int pixcmapAddBlackOrWhite(HandleRef cmap, int color, out int index);
+
+        /// <summary>
+        /// Sets the darkest color in the colormap to black, if <paramref name="setBlack"/> is 1. 
+        /// Sets the lightest color in the colormap to white if <paramref name="setWhite"/> is 1. 
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <param name="setBlack">0 for no operation; 1 to set darket color to black</param>
+        /// <param name="setWhite">0 for no operation; 1 to set lightest color to white</param>
+        /// <returns>Returns 0 if OK; 1 on error.</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapSetBlackAndWhite")]
+        int pixcmapSetBlackAndWhite(HandleRef cmap, int setBlack, int setWhite);
+
+        /// <summary>
+        /// Gets the color at the specified index.
+        /// </summary>
+        /// <remarks>
+        /// The alpha channel will always be zero as it is not used in Leptonica color maps.
+        /// </remarks>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <param name="index">The index of the color entry.</param>
+        /// <param name="color">The color entry as 32 bit value</param>
+        /// <returns>Returns 0 if OK; 1 if not accessable (caller should check).</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapGetColor32")]
+        int pixcmapGetColor32(HandleRef cmap, int index, out int color);
+
+        /// <summary>
+        /// Sets a previously allocated color entry.
+        /// </summary>
+        /// <param name="cmap">The pointer to the colormap instance.</param>
+        /// <param name="index">The index of the colormap entry</param>
+        /// <param name="redValue"></param>
+        /// <param name="blueValue"></param>
+        /// <param name="greenValue"></param>
+        /// <returns>Returns 0 if OK; 1 if not accessable (caller should check).</returns>
+        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapResetColor")]
+        int pixcmapResetColor(HandleRef cmap, int index, int redValue, int blueValue, int greenValue);
+
+        #endregion
+    }
+
+    internal class TessApi
+    {
+        public static ITessApiSignatures Native { get; private set; }
+        public static ILeptonicaApiSignatures Leptonica { get; private set; }
+
+        public static void Initialize(NativeLoader loader)
         {
-            get
-            {
-                if (native == null)
-                    Initialize();
-                return native;
-            }
+            Native = loader.CreateInstance<ITessApiSignatures>();
+            Leptonica = loader.CreateInstance<ILeptonicaApiSignatures>();
         }
 
         public static string BaseAPIGetUTF8Text(HandleRef handle)
@@ -93,7 +361,7 @@ namespace Tesseract.Interop
             if (txtHandle != IntPtr.Zero)
             {
                 var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
-                TessApi.Native.DeleteText(txtHandle);
+                Native.DeleteText(txtHandle);
                 return result;
             }
             else
@@ -116,9 +384,9 @@ namespace Tesseract.Interop
             int i = 0;
             foreach (var pair in initialValues)
             {
-                Guard.Require("initialValues", !String.IsNullOrEmpty(pair.Key), "Variable must have a name.");
-
+                Guard.Require("initialValues", !string.IsNullOrEmpty(pair.Key), "Variable must have a name.");
                 Guard.Require("initialValues", pair.Value != null, "Variable '{0}': The type '{1}' is not supported.", pair.Key, pair.Value.GetType());
+
                 varNames[i] = pair.Key;
                 string varValue;
                 if (TessConvert.TryToString(pair.Value, out varValue))
@@ -128,8 +396,8 @@ namespace Tesseract.Interop
                 else
                 {
                     throw new ArgumentException(
-                        String.Format("Variable '{0}': The type '{1}' is not supported.", pair.Key, pair.Value.GetType()),
-                        "initialValues"
+                        string.Format("Variable '{0}': The type '{1}' is not supported.", pair.Key, pair.Value.GetType()),
+                        nameof(initialValues)
                     );
                 }
                 i++;
@@ -138,15 +406,6 @@ namespace Tesseract.Interop
             return Native.BaseApiInit(handle, datapath, language, mode,
                 configFilesArray, configFilesArray.Length,
                 varNames, varValues, new UIntPtr((uint)varNames.Length), setOnlyNonDebugParams);
-        }
-
-        public static void Initialize()
-        {
-            if (native == null)
-            {
-                LeptonicaApi.Initialize();
-                native = InteropRuntimeImplementer.CreateInstance<ITessApiSignatures>();
-            }
         }
     }
 }

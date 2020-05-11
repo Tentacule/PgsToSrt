@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using Tesseract.Internal;
+using Tesseract.Interop;
+using Tncl.NativeLoader;
 
 namespace Tesseract
 {
@@ -12,7 +14,6 @@ namespace Tesseract
     /// </summary>
     public class TesseractEngine : DisposableBase
     {
-        private const string TesseractVersion = "3.05.02";
         private static readonly TraceSource trace = new TraceSource("Tesseract");
 
         private HandleRef handle;
@@ -61,7 +62,11 @@ namespace Tesseract
             Guard.RequireNotNullOrEmpty("language", language);
 
             DefaultPageSegMode = PageSegMode.Auto;
-            handle = new HandleRef(this, Interop.TessApi.Native.BaseApiCreate());
+
+            var loader = new NativeLoader();
+            TessApi.Initialize(loader);
+            
+            handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
 
             Initialise(datapath, language, engineMode, configFiles, initialOptions, setOnlyNonDebugVariables);
         }
@@ -134,113 +139,25 @@ namespace Tesseract
             processCount++;
 
             var actualPageSegmentMode = pageSegMode.HasValue ? pageSegMode.Value : DefaultPageSegMode;
-            Interop.TessApi.Native.BaseAPISetPageSegMode(handle, actualPageSegmentMode);
-            Interop.TessApi.Native.BaseApiSetImage(handle, image.Handle);
+            TessApi.Native.BaseAPISetPageSegMode(handle, actualPageSegmentMode);
+            TessApi.Native.BaseApiSetImage(handle, image.Handle);
             if (!String.IsNullOrEmpty(inputName))
             {
-                Interop.TessApi.Native.BaseApiSetInputName(handle, inputName);
+                TessApi.Native.BaseApiSetInputName(handle, inputName);
             }
             var page = new Page(this, image, inputName, region, actualPageSegmentMode);
             page.Disposed += OnIteratorDisposed;
             return page;
         }
-
-#if NETFULL
-
-        /// <summary>
-        /// Process the specified bitmap image.
-        /// </summary>
-        /// <remarks>
-        /// Please consider <see cref="Process(Pix, PageSegMode?)"/> instead. This is because
-        /// this method must convert the bitmap to a pix for processing which will add additional overhead.
-        /// Leptonica also supports a large number of image pre-processing functions as well.
-        /// </remarks>
-        /// <param name="image">The image to process.</param>
-        /// <param name="pageSegMode">The page segmentation mode.</param>
-        /// <returns></returns>
-        public Page Process(Bitmap image, PageSegMode? pageSegMode = null)
-        {
-            return Process(image, new Rect(0, 0, image.Width, image.Height), pageSegMode);
-        }
-
-        /// <summary>
-        /// Process the specified bitmap image.
-        /// </summary>
-        /// <remarks>
-        /// Please consider <see cref="Process(Pix, String, PageSegMode?)"/> instead. This is because
-        /// this method must convert the bitmap to a pix for processing which will add additional overhead.
-        /// Leptonica also supports a large number of image pre-processing functions as well.
-        /// </remarks>
-        /// <param name="image">The image to process.</param>
-        /// <param name="inputName">Sets the input file's name, only needed for training or loading a uzn file.</param>
-        /// <param name="pageSegMode">The page segmentation mode.</param>
-        /// <returns></returns>
-        public Page Process(Bitmap image, string inputName, PageSegMode? pageSegMode = null)
-        {
-            return Process(image, inputName, new Rect(0, 0, image.Width, image.Height), pageSegMode);
-        }
-
-        /// <summary>
-        /// Process the specified bitmap image.
-        /// </summary>
-        /// <remarks>
-        /// Please consider <see cref="TesseractEngine.Process(Pix, Rect, PageSegMode?)"/> instead. This is because
-        /// this method must convert the bitmap to a pix for processing which will add additional overhead.
-        /// Leptonica also supports a large number of image pre-processing functions as well.
-        /// </remarks>
-        /// <param name="image">The image to process.</param>
-        /// <param name="region">The region of the image to process.</param>
-        /// <param name="pageSegMode">The page segmentation mode.</param>
-        /// <returns></returns>
-        public Page Process(Bitmap image, Rect region, PageSegMode? pageSegMode = null)
-        {
-            return Process(image, null, region, pageSegMode);
-        }
-
-        /// <summary>
-        /// Process the specified bitmap image.
-        /// </summary>
-        /// <remarks>
-        /// Please consider <see cref="TesseractEngine.Process(Pix, String, Rect, PageSegMode?)"/> instead. This is because
-        /// this method must convert the bitmap to a pix for processing which will add additional overhead.
-        /// Leptonica also supports a large number of image pre-processing functions as well.
-        /// </remarks>
-        /// <param name="image">The image to process.</param>
-        /// <param name="inputName">Sets the input file's name, only needed for training or loading a uzn file.</param>
-        /// <param name="region">The region of the image to process.</param>
-        /// <param name="pageSegMode">The page segmentation mode.</param>
-        /// <returns></returns>
-        public Page Process(Bitmap image, string inputName, Rect region, PageSegMode? pageSegMode = null)
-        {
-            var pix = PixConverter.ToPix(image);
-            var page = Process(pix, inputName, region, pageSegMode);
-            new PageDisposalHandle(page, pix);
-            return page;
-        }
-
-#endif
-
+        
         protected override void Dispose(bool disposing)
         {
             if (handle.Handle != IntPtr.Zero)
             {
-                Interop.TessApi.Native.BaseApiDelete(handle);
+                TessApi.Native.BaseApiDelete(handle);
                 handle = new HandleRef(this, IntPtr.Zero);
             }
         }
-
-        //private string GetTessDataPrefix()
-        //{
-        //    try
-        //    {
-        //        return Environment.GetEnvironmentVariable("TESSDATA_PREFIX");
-        //    }
-        //    catch (SecurityException e)
-        //    {
-        //        trace.TraceEvent(TraceEventType.Error, 0, "Failed to detect if the environment variable 'TESSDATA_PREFIX' is set: {0}", e.Message);
-        //        return null;
-        //    }
-        //}
 
         private void Initialise(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialValues, bool setOnlyNonDebugVariables)
         {
@@ -265,7 +182,7 @@ namespace Tesseract
                 }
             }
 
-            if (Interop.TessApi.BaseApiInit(handle, datapath, language, (int)engineMode, configFiles ?? new List<string>(), initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) != 0)
+            if (TessApi.BaseApiInit(handle, datapath, language, (int)engineMode, configFiles ?? new List<string>(), initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) != 0)
             {
                 // Special case logic to handle cleaning up as init has already released the handle if it fails.
                 handle = new HandleRef(this, IntPtr.Zero);
@@ -318,7 +235,7 @@ namespace Tesseract
         public bool TryGetBoolVariable(string name, out bool value)
         {
             int val;
-            if (Interop.TessApi.Native.BaseApiGetBoolVariable(handle, name, out val) != 0)
+            if (TessApi.Native.BaseApiGetBoolVariable(handle, name, out val) != 0)
             {
                 value = (val != 0);
                 return true;

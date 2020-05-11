@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
+using Tesseract.Interop;
 
 namespace Tesseract
 {
@@ -18,18 +17,18 @@ namespace Tesseract
 
         internal PixColormap(IntPtr handle)
         {
-        	this.handle = new HandleRef(this, handle);
+            this.handle = new HandleRef(this, handle);
         }
-        
+
         internal HandleRef Handle
         {
             get { return handle; }
         }
-        
+
         public void Dispose()
         {
-        	IntPtr tmpHandle = Handle.Handle;
-            Interop.LeptonicaApi.Native.pixcmapDestroy(ref tmpHandle);
+            IntPtr tmpHandle = Handle.Handle;
+            TessApi.Leptonica.pixcmapDestroy(ref tmpHandle);
             this.handle = new HandleRef(this, IntPtr.Zero);
         }
     }

@@ -74,26 +74,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:Tesseract.Interop.Constants">
-            <summary>
-            Description of Constants.
-            </summary>
-        </member>
-        <member name="T:Tesseract.Interop.HostProcessInfo">
-            <summary>
-            Provides information about the hosting process.
-            </summary>
-        </member>
-        <member name="T:Tesseract.Interop.ILeptonicaApiSignatures">
-            <summary>
-            The exported leptonica api signatures.
-            </summary>
-            <remarks>
-            Please note this is only public for technical reasons (you can't proxy a internal interface).
-            It should be considered an internal interface and is NOT part of the public api and may have 
-            breaking changes between releases.
-            </remarks>
-        </member>
         <member name="M:Tesseract.Interop.ILeptonicaApiSignatures.pixcmapCreate(System.Int32)">
             <summary>
             Creates a new colormap with the specified <paramref name="depth"/>.
@@ -232,67 +212,19 @@
             <param name="greenValue"></param>
             <returns>Returns 0 if OK; 1 if not accessable (caller should check).</returns>
         </member>
+        <member name="T:Tesseract.Interop.Constants">
+            <summary>
+            Description of Constants.
+            </summary>
+        </member>
+        <member name="T:Tesseract.Interop.HostProcessInfo">
+            <summary>
+            Provides information about the hosting process.
+            </summary>
+        </member>
         <member name="M:Tesseract.Interop.MarshalHelper.StrLength(System.IntPtr)">
             <summary>
             Gets the number of bytes in a null terminated byte array.
-            </summary>
-        </member>
-        <member name="M:Tesseract.IResultRenderer.BeginDocument(System.String)">
-            <summary>
-            Begins a new document with the specified <paramref name="title"/>.
-            </summary>
-            <param name="title">The title of the new document.</param>
-            <returns>A handle that when disposed of ends the current document.</returns>
-        </member>
-        <member name="M:Tesseract.IResultRenderer.AddPage(Tesseract.Page)">
-            <summary>
-            Add the page to the current document.
-            </summary>
-            <param name="page"></param>
-            <returns><c>True</c> if the page was successfully added to the result renderer; otherwise false.</returns>
-        </member>
-        <member name="P:Tesseract.IResultRenderer.PageNumber">
-            <summary>
-            Gets the current page number; returning -1 if no page has yet been added otherwise the number
-            of the last added page (starting from 0).
-            </summary>
-        </member>
-        <member name="T:Tesseract.Orientation">
-            <summary>
-            Represents orientation that the page would need to be rotated so that .
-            </summary>
-            <remarks>
-            Orientation is defined as to what side of the page would need to correspond to the 'up' direction such that the characters will
-            be read able. Another way of looking at this what direction you need to rotate you head so that "up" aligns with Orientation, 
-            then the characters will appear "right side up" and readable.
-            
-            In short:
-            <list type="bullet">
-            	<item>PageUp - Page is correctly alligned with up and no rotation is needed.</item>
-            	<item>PageRight - Page needs to be rotated so the right hand side is up, 90 degress counter clockwise, to be readable.</item>
-            	<item>PageDown - Page needs to be rotated so the bottom side is up, 180 degress counter clockwise, to be readable.</item>
-            	<item>PageLeft - Page needs to be rotated so the left hand side is up, 90 degress clockwise, to be readable.</item>
-            </list>
-            </remarks>
-        </member>
-        <member name="F:Tesseract.Orientation.PageUp">
-            <summary>
-            Page is correctly alligned with up and no rotation is needed.
-            </summary>
-        </member>
-        <member name="F:Tesseract.Orientation.PageRight">
-            <summary>
-            Page needs to be rotated so the right hand side is up, 90 degress counter clockwise, to be readable.
-            </summary>
-        </member>
-        <member name="F:Tesseract.Orientation.PageDown">
-            <summary>
-            Page needs to be rotated so the bottom side is up, 180 degress counter clockwise, to be readable.
-            </summary>
-        </member>
-        <member name="F:Tesseract.Orientation.PageLeft">
-            <summary>
-            Page needs to be rotated so the left hand side is up, 90 degress clockwise, to be readable.
             </summary>
         </member>
         <member name="P:Tesseract.Page.Image">
@@ -455,31 +387,6 @@
              </list>
              </remarks>
              <returns>The pix with it's reference count incremented.</returns>
-        </member>
-        <member name="T:Tesseract.PixArrayAccessType">
-            <summary>
-            Determines how <see cref="T:Tesseract.Pix"/> of a <see cref="!:PixArray"/> structure are accessed.
-            </summary>
-        </member>
-        <member name="F:Tesseract.PixArrayAccessType.Insert">
-            <summary>
-            Stuff it in; no copy, clone or copy-clone.
-            </summary>
-        </member>
-        <member name="F:Tesseract.PixArrayAccessType.Copy">
-            <summary>
-            Make/use a copy of the object.
-            </summary>
-        </member>
-        <member name="F:Tesseract.PixArrayAccessType.Clone">
-            <summary>
-            Make/use clone (ref count) of the object   
-            </summary>
-        </member>
-        <member name="F:Tesseract.PixArrayAccessType.CopyClone">
-            <summary>
-            Make a new object and fill with with clones of each object in the array(s) 
-            </summary>
         </member>
         <member name="T:Tesseract.PixColormap">
             <summary>
@@ -678,22 +585,6 @@
             <summary>
             Desctiption of TesseractException.
             </summary>
-        </member>
-        <member name="M:InteropDotNet.LibraryLoader.CheckCurrentAppDomainBin(System.String,System.String)">
-            <summary>
-            Special test for web applications.
-            </summary>
-            <remarks>
-            Note that this makes a couple of assumptions these being:
-            
-            <list type="bullet">
-                <item>That the current application domain's location for web applications corresponds to the web applications root directory.</item>
-                <item>That the tesseract\leptonica dlls reside in the corresponding x86 or x64 directories in the bin directory under the apps root directory.</item>
-            </list>
-            </remarks>
-            <param name="fileName"></param>
-            <param name="platformName"></param>
-            <returns></returns>
         </member>
     </members>
 </doc>
