@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using Tesseract.Internal;
 using Tesseract.Interop;
@@ -14,10 +13,8 @@ namespace Tesseract
     /// </summary>
     public class TesseractEngine : DisposableBase
     {
-        private static readonly TraceSource trace = new TraceSource("Tesseract");
-
+        private readonly NativeLoader loader;
         private HandleRef handle;
-
         private int processCount = 0;
 
         /// <summary>
@@ -38,7 +35,7 @@ namespace Tesseract
             : this(datapath, language, engineMode, new string[0], new Dictionary<string, object>(), false)
         {
         }
-        
+
         /// <summary>
         /// Creates a new instance of <see cref="TesseractEngine"/> with the specified <paramref name="engineMode"/> and <paramref name="configFiles"/>.
         /// </summary>
@@ -63,14 +60,16 @@ namespace Tesseract
 
             DefaultPageSegMode = PageSegMode.Auto;
 
-            var loader = new NativeLoader();
+            loader = new NativeLoader();
+            loader.WindowsOptions.UseSetDllDirectory = true;
+
             TessApi.Initialize(loader);
-            
+
             handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
 
             Initialise(datapath, language, engineMode, configFiles, initialOptions, setOnlyNonDebugVariables);
         }
-        
+
         internal HandleRef Handle
         {
             get { return handle; }
@@ -149,7 +148,7 @@ namespace Tesseract
             page.Disposed += OnIteratorDisposed;
             return page;
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             if (handle.Handle != IntPtr.Zero)
@@ -157,6 +156,8 @@ namespace Tesseract
                 TessApi.Native.BaseApiDelete(handle);
                 handle = new HandleRef(this, IntPtr.Zero);
             }
+
+            loader.FreeAll();
         }
 
         private void Initialise(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialValues, bool setOnlyNonDebugVariables)
@@ -234,8 +235,7 @@ namespace Tesseract
         /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
         public bool TryGetBoolVariable(string name, out bool value)
         {
-            int val;
-            if (TessApi.Native.BaseApiGetBoolVariable(handle, name, out val) != 0)
+            if (TessApi.Native.BaseApiGetBoolVariable(handle, name, out var val) != 0)
             {
                 value = (val != 0);
                 return true;
