@@ -43,6 +43,7 @@
     <CSFile Include="*.cs" Exclude="obj\**\.cs" />
 
     <Folder Include="x86\" />
+    <Folder Include="x64\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="x64\*.dll" Pack="true" PackageCopyToOutput="true" PackagePath="x64">
@@ -54,5 +55,8 @@
     <Content Include="Tesseract.targets" Pack="true" PackageCopyToOutput="true" PackagePath="build/">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Tncl.NativeLoader" Version="1.0.2" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Tesseract.Internal;
+using Tesseract.Interop;
 
 namespace Tesseract
 {
@@ -11,14 +12,14 @@ namespace Tesseract
         private static readonly TraceSource trace = new TraceSource("Tesseract");
 
         private bool runRecognitionPhase;
-        private Rect regionOfInterest;
+        private Rect _regionOfInterest;
 
         public TesseractEngine Engine { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="Pix"/> that is being ocr'd.
         /// </summary>
-        public Pix Image { get; private set; }
+        public Pix Image { get; }
 
         /// <summary>
         /// Gets the name of the image being ocr'd.
@@ -49,19 +50,19 @@ namespace Tesseract
         {
             get
             {
-                return regionOfInterest;
+                return _regionOfInterest;
             }
             set
             {
                 if (value.X1 < 0 || value.Y1 < 0 || value.X2 > Image.Width || value.Y2 > Image.Height)
                     throw new ArgumentException("The region of interest to be processed must be within the image bounds.", "value");
 
-                if (regionOfInterest != value)
+                if (_regionOfInterest != value)
                 {
-                    regionOfInterest = value;
+                    _regionOfInterest = value;
 
                     // update region of interest in image
-                    Interop.TessApi.Native.BaseApiSetRectangle(Engine.Handle, regionOfInterest.X1, regionOfInterest.Y1, regionOfInterest.Width, regionOfInterest.Height);
+                    TessApi.Native.BaseApiSetRectangle(Engine.Handle, _regionOfInterest.X1, _regionOfInterest.Y1, _regionOfInterest.Width, _regionOfInterest.Height);
 
                     // request rerun of recognition on the next call that requires recognition
                     runRecognitionPhase = false;
@@ -77,7 +78,7 @@ namespace Tesseract
         {
             Recognize();
 
-            var pixHandle = Interop.TessApi.Native.BaseAPIGetThresholdedImage(Engine.Handle);
+            var pixHandle = TessApi.Native.BaseAPIGetThresholdedImage(Engine.Handle);
             if (pixHandle == IntPtr.Zero)
             {
                 throw new TesseractException("Failed to get thresholded image.");
@@ -93,7 +94,7 @@ namespace Tesseract
         public string GetText()
         {
             Recognize();
-            return Interop.TessApi.BaseAPIGetUTF8Text(Engine.Handle);
+            return TessApi.BaseAPIGetUTF8Text(Engine.Handle);
         }
 
         internal void Recognize()
@@ -101,7 +102,7 @@ namespace Tesseract
             Guard.Verify(PageSegmentMode != PageSegMode.OsdOnly, "Cannot OCR image when using OSD only page segmentation, please use DetectBestOrientation instead.");
             if (!runRecognitionPhase)
             {
-                if (Interop.TessApi.Native.BaseApiRecognize(Engine.Handle, new HandleRef(this, IntPtr.Zero)) != 0)
+                if (TessApi.Native.BaseApiRecognize(Engine.Handle, new HandleRef(this, IntPtr.Zero)) != 0)
                 {
                     throw new InvalidOperationException("Recognition of image failed.");
                 }
@@ -133,7 +134,7 @@ namespace Tesseract
         {
             if (disposing)
             {
-                Interop.TessApi.Native.BaseAPIClear(Engine.Handle);
+                TessApi.Native.BaseAPIClear(Engine.Handle);
             }
         }
     }

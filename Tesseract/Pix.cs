@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Tesseract.Internal;
+using Tesseract.Interop;
 
 namespace Tesseract
 {
@@ -64,11 +65,11 @@ namespace Tesseract
             if (handle == IntPtr.Zero) throw new ArgumentNullException("handle");
 
             this.handle = new HandleRef(this, handle);
-            this.width = Interop.LeptonicaApi.Native.pixGetWidth(this.handle);
-            this.height = Interop.LeptonicaApi.Native.pixGetHeight(this.handle);
-            this.depth = Interop.LeptonicaApi.Native.pixGetDepth(this.handle);
+            this.width = TessApi.Leptonica.pixGetWidth(this.handle);
+            this.height = TessApi.Leptonica.pixGetHeight(this.handle);
+            this.depth = TessApi.Leptonica.pixGetDepth(this.handle);
 
-            var colorMapHandle = Interop.LeptonicaApi.Native.pixGetColormap(this.handle);
+            var colorMapHandle = TessApi.Leptonica.pixGetColormap(this.handle);
             if (colorMapHandle != IntPtr.Zero)
             {
                 this.colormap = new PixColormap(colorMapHandle);
@@ -83,7 +84,7 @@ namespace Tesseract
             if (width <= 0) throw new ArgumentException("Width must be greater than zero", "width");
             if (height <= 0) throw new ArgumentException("Height must be greater than zero", "height");
 
-            var handle = Interop.LeptonicaApi.Native.pixCreate(width, height, depth);
+            var handle = TessApi.Leptonica.pixCreate(width, height, depth);
             if (handle == IntPtr.Zero) throw new InvalidOperationException("Failed to create pix, this normally occurs because the requested image size is too large, please check Standard Error Output.");
 
             return Create(handle);
@@ -95,13 +96,13 @@ namespace Tesseract
 
             return new Pix(handle);
         }
-        
+
         public static Pix LoadFromMemory(byte[] bytes)
         {
             IntPtr handle;
             fixed (byte* ptr = bytes)
             {
-                handle = Interop.LeptonicaApi.Native.pixReadMem(ptr, bytes.Length);
+                handle = TessApi.Leptonica.pixReadMem(ptr, bytes.Length);
             }
             if (handle == IntPtr.Zero)
             {
@@ -109,7 +110,7 @@ namespace Tesseract
             }
             return Create(handle);
         }
-        
+
         #endregion Create\Load methods
 
         #region Properties
@@ -121,14 +122,14 @@ namespace Tesseract
             {
                 if (value != null)
                 {
-                    if (Interop.LeptonicaApi.Native.pixSetColormap(handle, value.Handle) == 0)
+                    if (TessApi.Leptonica.pixSetColormap(handle, value.Handle) == 0)
                     {
                         colormap = value;
                     }
                 }
                 else
                 {
-                    if (Interop.LeptonicaApi.Native.pixDestroyColormap(handle) == 0)
+                    if (TessApi.Leptonica.pixDestroyColormap(handle) == 0)
                     {
                         colormap = null;
                     }
@@ -153,14 +154,14 @@ namespace Tesseract
 
         public int XRes
         {
-            get { return Interop.LeptonicaApi.Native.pixGetXRes(this.handle); }
-            set { Interop.LeptonicaApi.Native.pixSetXRes(this.handle, value); }
+            get { return TessApi.Leptonica.pixGetXRes(this.handle); }
+            set { TessApi.Leptonica.pixSetXRes(this.handle, value); }
         }
 
         public int YRes
         {
-            get { return Interop.LeptonicaApi.Native.pixGetYRes(this.handle); }
-            set { Interop.LeptonicaApi.Native.pixSetYRes(this.handle, value); }
+            get { return TessApi.Leptonica.pixGetYRes(this.handle); }
+            set { TessApi.Leptonica.pixSetYRes(this.handle, value); }
         }
 
         internal HandleRef Handle
@@ -194,7 +195,7 @@ namespace Tesseract
             }
 
             int same;
-            if (Interop.LeptonicaApi.Native.pixEqual(Handle, other.Handle, out same) != 0)
+            if (TessApi.Leptonica.pixEqual(Handle, other.Handle, out same) != 0)
             {
                 throw new TesseractException("Failed to compare pix");
             }
@@ -227,7 +228,7 @@ namespace Tesseract
                 actualFormat = format.Value;
             }
 
-            if (Interop.LeptonicaApi.Native.pixWrite(filename, handle, actualFormat) != 0)
+            if (TessApi.Leptonica.pixWrite(filename, handle, actualFormat) != 0)
             {
                 throw new IOException(String.Format("Failed to save image '{0}'.", filename));
             }
@@ -257,7 +258,7 @@ namespace Tesseract
         /// <returns>The pix with it's reference count incremented.</returns>
         public Pix Clone()
         {
-            var clonedHandle = Interop.LeptonicaApi.Native.pixClone(handle);
+            var clonedHandle = TessApi.Leptonica.pixClone(handle);
             return new Pix(clonedHandle);
         }
 
@@ -268,7 +269,7 @@ namespace Tesseract
         protected override void Dispose(bool disposing)
         {
             var tmpHandle = handle.Handle;
-            Interop.LeptonicaApi.Native.pixDestroy(ref tmpHandle);
+            TessApi.Leptonica.pixDestroy(ref tmpHandle);
             this.handle = new HandleRef(this, IntPtr.Zero);
         }
 
