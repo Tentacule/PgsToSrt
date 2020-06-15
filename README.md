@@ -38,7 +38,7 @@ docker run -it --rm -v /data:/data \
 
 ### Dependencies
 - Windows : none, tesseract/leptonica libraries are included in the release package.
-- Linux   : libtesseract3 liblept5
+- Linux   : libtesseract3 (`sudo apt install libtesseract3`)
 
 ### Build
 To build PgsToSrt.dll execute this commands
