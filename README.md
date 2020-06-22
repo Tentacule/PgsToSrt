@@ -20,7 +20,7 @@ dotnet PgsToSrt.dll [parameters]
 | --output           | Output Subrip (.srt) filename.|
 | --track            | Track number of the subtitle to process in an mkv file (only required when input is a matroska file) <br/>This can be obtained with mkvinfo |
 | --tesseractlanguage| Tesseract language to use if multiple languages are available in the tesseract data directory.        |
-| --tesseractdata    | Path of tesseract language data files, by default 'tessdata' in the executable direcotry.             |
+| --tesseractdata    | Path of tesseract language data files, by default 'tessdata' in the executable directory.             |
 
 #### Example (Command Line)
 ```
