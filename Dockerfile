@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS builder
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS builder
 
 RUN apt-get update && \
     apt-get install -y automake ca-certificates g++ git libtool libtesseract3 make pkg-config && \

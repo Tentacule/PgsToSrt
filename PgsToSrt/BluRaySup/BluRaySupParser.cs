@@ -26,9 +26,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Nikse.SubtitleEdit.Core.BluRaySup;
-using Point = SixLabors.Primitives.Point;
-using Rectangle = SixLabors.Primitives.Rectangle;
-using Size = SixLabors.Primitives.Size;
+using Point = SixLabors.ImageSharp.Point;
+using Rectangle = SixLabors.ImageSharp.Rectangle;
+using Size = SixLabors.ImageSharp.Size;
 
 namespace PgsToSrt.BluRaySup
 {
@@ -127,7 +127,7 @@ namespace PgsToSrt.BluRaySup
 
                 var pal = DecodePalette(palettes);
                 var bm = new Image<Rgba32>(w, h);
-                var pixelSpan = bm.GetPixelSpan();
+                bm.TryGetSinglePixelSpan(out var pixelSpan);
 
                 int ofs = 0;
                 int xpos = 0;
