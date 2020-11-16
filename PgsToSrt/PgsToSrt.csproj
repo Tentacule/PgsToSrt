@@ -15,7 +15,7 @@
 
  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="libse" Version="3.5.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
     <PackageReference Include="NLog" Version="4.7.5" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.6.5" />
@@ -23,9 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\libse\LibSE.csproj" />
     <ProjectReference Include="..\Tesseract\Tesseract.csproj" />
-    <ProjectReference Include="..\zlibnet\zlib.net.csproj" />
   </ItemGroup>
 
   <ItemGroup>
