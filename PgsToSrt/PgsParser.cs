@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using Nikse.SubtitleEdit.Core.BluRaySup;
 using Nikse.SubtitleEdit.Core.ContainerFormats.Matroska;
-using PgsToSrt.BluRaySup;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using static Nikse.SubtitleEdit.Core.BluRaySup.BluRaySupParser;
 
 namespace PgsToSrt
 {
@@ -138,6 +139,8 @@ namespace PgsToSrt
             var log = new StringBuilder();
             var clusterStream = new MemoryStream();
             var lastPalettes = new Dictionary<int, List<PaletteInfo>>();
+            var bitmapObjects = new Dictionary<int, List<OdsData>>();
+
             foreach (var p in sub)
             {
                 var buffer = p.GetData(matroskaSubtitleInfo);
@@ -151,7 +154,7 @@ namespace PgsToSrt
                             subtitles[subtitles.Count - 1].EndTime = (long)((p.Start - 1) * 90.0);
                         }
                         clusterStream.Position = 0;
-                        var list = BluRaySupParser.ParseBluRaySup(clusterStream, log, true, lastPalettes);
+                        var list = BluRaySupParser.ParseBluRaySup(clusterStream, log, true, lastPalettes, bitmapObjects);
                         foreach (var sup in list)
                         {
                             sup.StartTime = (long)((p.Start - 1) * 90.0);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Nikse.SubtitleEdit.Core;
+using Nikse.SubtitleEdit.Core.BluRaySup;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
 using PgsToSrt.BluRaySup;
 using SixLabors.ImageSharp;
@@ -39,7 +40,7 @@ public class PgsOcr
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Saving '{outputFileName}' failed:");
+            _logger.LogError(ex, $"Saving '{outputFileName}' failed:");
             return false;
         }
     }
@@ -121,7 +122,7 @@ public class PgsOcr
 
     private Image<Rgba32> GetSubtitleBitmap(int index)
     {
-        return _bluraySubtitles[index].GetBitmap();
+        return _bluraySubtitles[index].GetRgba32();
     }
 
 }
