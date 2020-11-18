@@ -36,6 +36,12 @@ namespace Tesseract
         
         public event EventHandler<EventArgs> Disposed;
 
+		
+		protected virtual void VerifyNotDisposed()
+		{
+			if(IsDisposed) throw new ObjectDisposedException(ToString());
+		}
+		
 		protected abstract void Dispose(bool disposing);
 	}
 }

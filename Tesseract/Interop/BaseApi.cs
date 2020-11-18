@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InteropDotNet;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -18,7 +19,15 @@ namespace Tesseract.Interop
     public interface ITessApiSignatures
     {
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIClear")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetComponentImages")]
+        IntPtr BaseAPIGetComponentImages(HandleRef handle, PageIteratorLevel level, int text_only, IntPtr pixa, IntPtr blockids);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIAnalyseLayout")]
+        IntPtr BaseAPIAnalyseLayout(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIClear")]
         void BaseAPIClear(HandleRef handle);
 
         /// <summary>
@@ -26,7 +35,7 @@ namespace Tesseract.Interop
         /// </summary>
         /// <returns></returns>
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPICreate")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPICreate")]
         IntPtr BaseApiCreate();
 
         // Base API
@@ -35,324 +44,575 @@ namespace Tesseract.Interop
         /// </summary>
         /// <returns></returns>
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDelete")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDelete")]
         void BaseApiDelete(HandleRef ptr);
 
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetBoolVariable")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDetectOrientationScript")]
+        int TessBaseAPIDetectOrientationScript(HandleRef handle, out int orient_deg, out float orient_conf, out IntPtr script_name, out float script_conf);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetBoolVariable")]
         int BaseApiGetBoolVariable(HandleRef handle, string name, out int value);
 
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetThresholdedImage")]
-        IntPtr BaseAPIGetThresholdedImage(HandleRef handle);
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetDoubleVariable")]
+        int BaseApiGetDoubleVariable(HandleRef handle, string name, out double value);
 
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUTF8Text")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetHOCRText")]
+        IntPtr BaseApiGetHOCRTextInternal(HandleRef handle, int pageNum);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetAltoText")]
+        IntPtr BaseApiGetAltoTextInternal(HandleRef handle, int pageNum);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetTsvText")]
+        IntPtr BaseApiGetTsvTextInternal(HandleRef handle, int pageNum);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetBoxText")]
+        IntPtr BaseApiGetBoxTextInternal(HandleRef handle, int pageNum);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetLSTMBoxText")]
+        IntPtr BaseApiGetLSTMBoxTextInternal(HandleRef handle, int pageNum);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetWordStrBoxText")]
+        IntPtr BaseApiGetWordStrBoxTextInternal(HandleRef handle, int pageNum);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUNLVText")]
+        IntPtr BaseApiGetUNLVTextInternal(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetIntVariable")]
+        int BaseApiGetIntVariable(HandleRef handle, string name, out int value);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetIterator")]
+        IntPtr BaseApiGetIterator(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetPageSegMode")]
+        PageSegMode BaseAPIGetPageSegMode(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetStringVariable")]
+        IntPtr BaseApiGetStringVariableInternal(HandleRef handle, string name);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)][RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetThresholdedImage")]
+        IntPtr BaseAPIGetThresholdedImage(HandleRef handle);
+
+        // The following were causing issues on Linux/MacOsX when used in .net core
+        //[NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)][RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIProcessPages")]
+        //int BaseAPIProcessPages(HandleRef handle, string filename, string retry_config, int timeout_millisec, HandleRef renderer);
+
+        //[NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)][RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIProcessPage")]
+        //int BaseAPIProcessPage(HandleRef handle, Pix pix, int page_index, string filename, string retry_config, int timeout_millisec, HandleRef renderer);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetInputName")]
+        void BaseAPISetInputName(HandleRef handle, string name);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetDatapath")]
+        string BaseAPIGetDatapath(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetOutputName")]
+        void BaseAPISetOutputName(HandleRef handle, string name);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUTF8Text")]
         IntPtr BaseAPIGetUTF8TextInternal(HandleRef handle);
 
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit4")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit4")]
         int BaseApiInit(HandleRef handle, string datapath, string language, int mode,
                                       string[] configs, int configs_size,
                                       string[] vars_vec, string[] vars_values, UIntPtr vars_vec_size,
                                       bool set_only_non_debug_params);
 
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIRecognize")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIMeanTextConf")]
+        int BaseAPIMeanTextConf(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIRecognize")]
         int BaseApiRecognize(HandleRef handle, HandleRef monitor);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetDebugVariable")]
+        int BaseApiSetDebugVariable(HandleRef handle, string name, IntPtr valPtr);
 
         // image analysis
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetImage2")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetImage2")]
         void BaseApiSetImage(HandleRef handle, HandleRef pixHandle);
 
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetInputName")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetInputName")]
         void BaseApiSetInputName(HandleRef handle, string value);
 
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetPageSegMode")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetPageSegMode")]
         void BaseAPISetPageSegMode(HandleRef handle, PageSegMode mode);
-       
+
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetRectangle")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetRectangle")]
         void BaseApiSetRectangle(HandleRef handle, int left, int top, int width, int height);
 
         [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "3", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteText")]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetVariable")]
+        int BaseApiSetVariable(HandleRef handle, string name, IntPtr valPtr);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteBlockList")]
+        void DeleteBlockList(IntPtr arr);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteIntArray")]
+        void DeleteIntArray(IntPtr arr);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteText")]
         void DeleteText(IntPtr textPtr);
 
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteTextArray")]
+        void DeleteTextArray(IntPtr arr);
+
+        // Helper functions
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessVersion")]
+        IntPtr GetVersion();
+
+        // result iterator
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorBaseline")]
+        int PageIteratorBaseline(HandleRef handle, PageIteratorLevel level, out int x1, out int y1, out int x2, out int y2);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorBegin")]
+        void PageIteratorBegin(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorBlockType")]
+        PolyBlockType PageIteratorBlockType(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorBoundingBox")]
+        int PageIteratorBoundingBox(HandleRef handle, PageIteratorLevel level, out int left, out int top, out int right, out int bottom);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorCopy")]
+        IntPtr PageIteratorCopy(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorDelete")]
+        void PageIteratorDelete(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorGetBinaryImage")]
+        IntPtr PageIteratorGetBinaryImage(HandleRef handle, PageIteratorLevel level);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorGetImage")]
+        IntPtr PageIteratorGetImage(HandleRef handle, PageIteratorLevel level, int padding, HandleRef originalImage, out int left, out int top);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorIsAtBeginningOf")]
+        int PageIteratorIsAtBeginningOf(HandleRef handle, PageIteratorLevel level);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorIsAtFinalElement")]
+        int PageIteratorIsAtFinalElement(HandleRef handle, PageIteratorLevel level, PageIteratorLevel element);
+
+        // page iterator
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorNext")]
+        int PageIteratorNext(HandleRef handle, PageIteratorLevel level);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorOrientation")]
+        void PageIteratorOrientation(HandleRef handle, out Orientation orientation, out WritingDirection writing_direction, out TextLineOrder textLineOrder, out float deskew_angle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorCopy")]
+        IntPtr ResultIteratorCopy(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorDelete")]
+        void ResultIteratorDelete(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorConfidence")]
+        float ResultIteratorGetConfidence(HandleRef handle, PageIteratorLevel level);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorWordFontAttributes")]
+        IntPtr ResultIteratorWordFontAttributes(HandleRef handle, out bool isBold, out bool isItalic, out bool isUnderlined, out bool isMonospace, out bool isSerif, out bool isSmallCaps, out int pointSize, out int fontId);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorWordIsFromDictionary")]
+        bool ResultIteratorWordIsFromDictionary(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorWordIsNumeric")]
+        bool ResultIteratorWordIsNumeric(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorWordRecognitionLanguage")]
+        IntPtr ResultIteratorWordRecognitionLanguageInternal(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorSymbolIsSuperscript")]
+        bool ResultIteratorSymbolIsSuperscript(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorSymbolIsSubscript")]
+        bool ResultIteratorSymbolIsSubscript(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorSymbolIsDropcap")]
+        bool ResultIteratorSymbolIsDropcap(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetPageIterator")]
+        IntPtr ResultIteratorGetPageIterator(HandleRef handle);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetUTF8Text")]
+        IntPtr ResultIteratorGetUTF8TextInternal(HandleRef handle, PageIteratorLevel level);
+
+        #region Choice Iterator
+
+        /// <summary>
+        /// Native API call to TessResultIteratorGetChoiceIterator
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <returns></returns>
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetChoiceIterator")]
+        IntPtr ResultIteratorGetChoiceIterator(HandleRef handle);
+
+        /// <summary>
+        /// Native API call to TessChoiceIteratorDelete
+        /// </summary>
+        /// <param name="handle"></param>
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorDelete")]
+        void ChoiceIteratorDelete(HandleRef handle);
+
+        /// <summary>
+        /// Native API call to TessChoiceIteratorNext
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <returns></returns>
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorNext")]
+        int ChoiceIteratorNext(HandleRef handle);
+
+        /// <summary>
+        /// Native API call to TessChoiceIteratorGetUTF8Text
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <returns></returns>
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorGetUTF8Text")]
+        IntPtr ChoiceIteratorGetUTF8TextInternal(HandleRef handle);
+
+        /// <summary>
+        /// Native API call to TessChoiceIteratorConfidence
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <returns></returns>
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorConfidence")]
+        float ChoiceIteratorGetConfidence(HandleRef handle);
+
+        #endregion Choice Iterator
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIPrintVariablesToFile")]
+        int BaseApiPrintVariablesToFile(HandleRef handle, string filename);
+
+        #region Renderer API
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessTextRendererCreate")]
+        IntPtr TextRendererCreate(string outputbase);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessAltoRendererCreate")]
+        IntPtr AltoRendererCreate(string outputbase);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessTsvRendererCreate")]
+        IntPtr TsvRendererCreate(string outputbase);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessHOcrRendererCreate")]
+        IntPtr HOcrRendererCreate(string outputbase);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessHOcrRendererCreate2")]
+        IntPtr HOcrRendererCreate2(string outputbase, int font_info);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPDFRendererCreate")]
+        IntPtr PDFRendererCreate(string outputbase, IntPtr datadir, int textonly);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessUnlvRendererCreate")]
+        IntPtr UnlvRendererCreate(string outputbase);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBoxTextRendererCreate")]
+        IntPtr BoxTextRendererCreate(string outputbase);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessLSTMBoxRendererCreate")]
+        IntPtr LSTMBoxRendererCreate(string outputbase);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessWordStrBoxRendererCreate")]
+        IntPtr WordStrBoxRendererCreate(string outputbase);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteResultRenderer")]
+        void DeleteResultRenderer(HandleRef renderer);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererInsert")]
+        void ResultRendererInsert(HandleRef renderer, HandleRef next);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererNext")]
+        IntPtr ResultRendererNext(HandleRef renderer);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererBeginDocument")]
+        int ResultRendererBeginDocument(HandleRef renderer, IntPtr titlePtr);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererAddImage")]
+        int ResultRendererAddImage(HandleRef renderer, HandleRef api);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererEndDocument")]
+        int ResultRendererEndDocument(HandleRef renderer);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererExtention")]
+        IntPtr ResultRendererExtention(HandleRef renderer);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererTitle")]
+        IntPtr ResultRendererTitle(HandleRef renderer);
+
+        [NativeLoaderOverride(LibraryName = Constants.TesseractWindowsDllName, Platform = Platform.Windows)]
+        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.TesseractLibraryName, LibraryVersion = "4", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererImageNum")]
+        int ResultRendererImageNum(HandleRef renderer);
+
+        #endregion Renderer API
     }
-
-    public interface ILeptonicaApiSignatures
+        
+    internal static class TessApi
     {
-        #region Pix
+        //XHTML Begin Tag:
+        public const string xhtmlBeginTag =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n"
+            + "    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+            + "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" "
+            + "lang=\"en\">\n <head>\n  <title></title>\n"
+            + "<meta http-equiv=\"Content-Type\" content=\"text/html;"
+            + "charset=utf-8\" />\n"
+            + "  <meta name='ocr-system' content='tesseract' />\n"
+            + "  <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par"
+            + " ocr_line ocrx_word"
+            + "'/>\n"
+            + "</head>\n<body>\n";
 
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixCreate")]
-        unsafe IntPtr pixCreate(int width, int height, int depth);
+        //XHTML End Tag:
+        public const string xhtmlEndTag = " </body>\n</html>\n";
 
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixClone")]
-        unsafe IntPtr pixClone(HandleRef pix);
+        public const string htmlBeginTag =
+            "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\""
+            + " \"http://www.w3.org/TR/html4/loose.dtd\">\n"
+            + "<html>\n<head>\n<title></title>\n"
+            + "<meta http-equiv=\"Content-Type\" content=\"text/html;"
+            + "charset=utf-8\" />\n<meta name='ocr-system' content='tesseract'/>\n"
+            + "</head>\n<body>\n";
 
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixDestroy")]
-        void pixDestroy(ref IntPtr pix);
+        public const string htmlEndTag = "</body>\n</html>\n";
 
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixEqual")]
-        int pixEqual(HandleRef pix1, HandleRef pix2, out int same);
+        private static ITessApiSignatures native;
 
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetWidth")]
-        int pixGetWidth(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetHeight")]
-        int pixGetHeight(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetDepth")]
-        int pixGetDepth(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetXRes")]
-        int pixGetXRes(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetYRes")]
-        int pixGetYRes(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetWpl")]
-        int pixGetWpl(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixSetXRes")]
-        int pixSetXRes(HandleRef pix, int xres);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixSetYRes")]
-        int pixSetYRes(HandleRef pix, int yres);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetData")]
-        IntPtr pixGetData(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixEndianByteSwap")]
-        int pixEndianByteSwap(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixReadMem")]
-        unsafe IntPtr pixReadMem(byte* data, int length);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixWrite")]
-        int pixWrite(string filename, HandleRef handle, ImageFormat format);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetColormap")]
-        IntPtr pixGetColormap(HandleRef pix);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixSetColormap")]
-        int pixSetColormap(HandleRef pix, HandleRef pixCmap);
-
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixDestroyColormap")]
-        int pixDestroyColormap(HandleRef pix);
-
-        #endregion
-
-        #region Color map
-
-        // Color map creation and deletion
-
-        /// <summary>
-        /// Creates a new colormap with the specified <paramref name="depth"/>.
-        /// </summary>
-        /// <param name="depth">The depth of the pix in bpp, can be 2, 4, or 8</param>
-        /// <returns>The pointer to the color map, or null on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapCreate")]
-        IntPtr pixcmapCreate(int depth);
-
-        /// <summary>
-        /// Creates a new colormap of the specified <paramref name="depth"/> with random colors where the first color can optionally be set to black, and the last optionally set to white.
-        /// </summary>
-        /// <param name="depth">The depth of the pix in bpp, can be 2, 4, or 8</param>
-        /// <param name="hasBlack">If set to 1 the first color will be black.</param>
-        /// <param name="hasWhite">If set to 1 the last color will be white.</param>
-        /// <returns>The pointer to the color map, or null on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapCreateRandom")]
-        IntPtr pixcmapCreateRandom(int depth, int hasBlack, int hasWhite);
-
-        /// <summary>
-        /// Creates a new colormap of the specified <paramref name="depth"/> with equally spaced gray color values. 
-        /// </summary>
-        /// <param name="depth">The depth of the pix in bpp, can be 2, 4, or 8</param>
-        /// <param name="levels">The number of levels (must be between 2 and 2^<paramref name="depth"/></param>
-        /// <returns>The pointer to the colormap, or null on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapCreateLinear")]
-        IntPtr pixcmapCreateLinear(int depth, int levels);
-
-        /// <summary>
-        /// Destorys and cleans up any memory used by the color map.
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance, set to null on success.</param>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapDestroy")]
-        void pixcmapDestroy(ref IntPtr cmap);
-
-        /// <summary>
-        /// Gets the number of color entries in the color map.
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <returns>Returns the number of color entries in the color map, or 0 on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapGetCount")]
-        int pixcmapGetCount(HandleRef cmap);
-
-        /// <summary>
-        /// Gets the number of free color entries in the color map.
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <returns>Returns the number of free color entries in the color map, or 0 on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapGetFreeCount")]
-        int pixcmapGetFreeCount(HandleRef cmap);
-
-
-        /// <returns>Returns color maps depth, or 0 on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapGetDepth")]
-        int pixcmapGetDepth(HandleRef cmap);
-
-        /// <summary>
-        /// Removes all colors from the color map by setting the count to zero.
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <returns>Returns 0 if OK, 1 on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapClear")]
-        int pixcmapClear(HandleRef cmap);
-
-        /// <summary>
-        /// Adds the color to the pix color map if their is room.
-        /// </summary>
-        /// <returns>Returns 0 if OK, 1 on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapAddColor")]
-        int pixcmapAddColor(HandleRef cmap, int redValue, int greenValue, int blueValue);
-
-        /// <summary>
-        /// Adds the specified color if it doesn't already exist, returning the colors index in the data array.
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <param name="redValue">The red value</param>
-        /// <param name="greenValue">The green value</param>
-        /// <param name="blueValue">The blue value</param>
-        /// <param name="colorIndex">The index of the new color if it was added, or the existing color if it already existed.</param>
-        /// <returns>Returns 0 for success, 1 for error, 2 for not enough space.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapAddNewColor")]
-        int pixcmapAddNewColor(HandleRef cmap, int redValue, int greenValue, int blueValue, out int colorIndex);
-
-        /// <summary>
-        /// Adds the specified color if it doesn't already exist, returning the color's index in the data array.
-        /// </summary>
-        /// <remarks>
-        /// If the color doesn't exist and there is not enough room to add a new color return the nearest color.
-        /// </remarks>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <param name="redValue">The red value</param>
-        /// <param name="greenValue">The green value</param>
-        /// <param name="blueValue">The blue value</param>
-        /// <param name="colorIndex">The index of the new color if it was added, or the existing color if it already existed.</param>
-        /// <returns>Returns 0 for success, 1 for error, 2 for not enough space.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapAddNearestColor")]
-        int pixcmapAddNearestColor(HandleRef cmap, int redValue, int greenValue, int blueValue, out int colorIndex);
-
-        /// <summary>
-        /// Checks if the color already exists or if their is enough room to add it.
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <param name="redValue">The red value</param>
-        /// <param name="greenValue">The green value</param>
-        /// <param name="blueValue">The blue value</param>
-        /// <param name="usable">Returns 1 if usable; 0 if not.</param>
-        /// <returns>Returns 0 if OK, 1 on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapUsableColor")]
-        int pixcmapUsableColor(HandleRef cmap, int redValue, int greenValue, int blueValue, out int usable);
-
-        /// <summary>
-        /// Adds a color (black\white) if not already there returning it's index through <paramref name="index"/>.
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <param name="color">The color to add (0 for black; 1 for white)</param>
-        /// <param name="index">The index of the color.</param>
-        /// <returns>Returns 0 if OK; 1 on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapAddBlackOrWhite")]
-        int pixcmapAddBlackOrWhite(HandleRef cmap, int color, out int index);
-
-        /// <summary>
-        /// Sets the darkest color in the colormap to black, if <paramref name="setBlack"/> is 1. 
-        /// Sets the lightest color in the colormap to white if <paramref name="setWhite"/> is 1. 
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <param name="setBlack">0 for no operation; 1 to set darket color to black</param>
-        /// <param name="setWhite">0 for no operation; 1 to set lightest color to white</param>
-        /// <returns>Returns 0 if OK; 1 on error.</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapSetBlackAndWhite")]
-        int pixcmapSetBlackAndWhite(HandleRef cmap, int setBlack, int setWhite);
-
-        /// <summary>
-        /// Gets the color at the specified index.
-        /// </summary>
-        /// <remarks>
-        /// The alpha channel will always be zero as it is not used in Leptonica color maps.
-        /// </remarks>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <param name="index">The index of the color entry.</param>
-        /// <param name="color">The color entry as 32 bit value</param>
-        /// <returns>Returns 0 if OK; 1 if not accessable (caller should check).</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapGetColor32")]
-        int pixcmapGetColor32(HandleRef cmap, int index, out int color);
-
-        /// <summary>
-        /// Sets a previously allocated color entry.
-        /// </summary>
-        /// <param name="cmap">The pointer to the colormap instance.</param>
-        /// <param name="index">The index of the colormap entry</param>
-        /// <param name="redValue"></param>
-        /// <param name="blueValue"></param>
-        /// <param name="greenValue"></param>
-        /// <returns>Returns 0 if OK; 1 if not accessable (caller should check).</returns>
-        [NativeLoaderOverride(LibraryName = Constants.LeptonicaWindowsDllName, Platform = Platform.Windows)]
-        [RuntimeUnmanagedFunctionPointer(LibraryName = Constants.LeptonicaLibraryName, LibraryVersion = "5", CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapResetColor")]
-        int pixcmapResetColor(HandleRef cmap, int index, int redValue, int blueValue, int greenValue);
-
-        #endregion
-    }
-
-    internal class TessApi
-    {
-        public static ITessApiSignatures Native { get; private set; }
-        public static ILeptonicaApiSignatures Leptonica { get; private set; }
-
-        public static void Initialize(NativeLoader loader)
+        public static ITessApiSignatures Native
         {
-            Native = loader.CreateInstance<ITessApiSignatures>();
-            Leptonica = loader.CreateInstance<ILeptonicaApiSignatures>();
+            get
+            {
+                if (native == null)
+                    Initialize();
+                return native;
+            }
+        }
+
+        public static void SetLeptonicaApiSignatures(ITessApiSignatures lessApiSignatures)
+        {
+            native = lessApiSignatures;
+        }
+
+        public static string BaseApiGetVersion()
+        {
+            IntPtr versionHandle = Native.GetVersion();
+            if (versionHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(versionHandle, Encoding.UTF8);
+                return result;
+            }
+
+            return null;
+        }
+
+        public static string BaseAPIGetHOCRText(HandleRef handle, int pageNum)
+        {
+            IntPtr txtHandle = Native.BaseApiGetHOCRTextInternal(handle, pageNum);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return htmlBeginTag + result + htmlEndTag;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        //Just Copied:
+        public static string BaseAPIGetHOCRText2(HandleRef handle, int pageNum)
+        {
+            IntPtr txtHandle = Native.BaseApiGetHOCRTextInternal(handle, pageNum);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return xhtmlBeginTag + result + xhtmlEndTag;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static string BaseAPIGetAltoText(HandleRef handle, int pageNum)
+        {
+            IntPtr txtHandle = Native.BaseApiGetAltoTextInternal(handle, pageNum);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static string BaseAPIGetTsvText(HandleRef handle, int pageNum)
+        {
+            IntPtr txtHandle = Native.BaseApiGetTsvTextInternal(handle, pageNum);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static string BaseAPIGetBoxText(HandleRef handle, int pageNum)
+        {
+            IntPtr txtHandle = Native.BaseApiGetBoxTextInternal(handle, pageNum);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static string BaseAPIGetLSTMBoxText(HandleRef handle, int pageNum)
+        {
+            IntPtr txtHandle = Native.BaseApiGetLSTMBoxTextInternal(handle, pageNum);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static string BaseAPIGetWordStrBoxText(HandleRef handle, int pageNum)
+        {
+            IntPtr txtHandle = Native.BaseApiGetWordStrBoxTextInternal(handle, pageNum);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static string BaseAPIGetUNLVText(HandleRef handle)
+        {
+            IntPtr txtHandle = Native.BaseApiGetUNLVTextInternal(handle);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static string BaseApiGetStringVariable(HandleRef handle, string name)
+        {
+            var resultHandle = Native.BaseApiGetStringVariableInternal(handle, name);
+            if (resultHandle != IntPtr.Zero)
+            {
+                return MarshalHelper.PtrToString(resultHandle, Encoding.UTF8);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public static string BaseAPIGetUTF8Text(HandleRef handle)
@@ -361,7 +621,7 @@ namespace Tesseract.Interop
             if (txtHandle != IntPtr.Zero)
             {
                 var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
-                Native.DeleteText(txtHandle);
+                TessApi.Native.DeleteText(txtHandle);
                 return result;
             }
             else
@@ -384,9 +644,9 @@ namespace Tesseract.Interop
             int i = 0;
             foreach (var pair in initialValues)
             {
-                Guard.Require("initialValues", !string.IsNullOrEmpty(pair.Key), "Variable must have a name.");
-                Guard.Require("initialValues", pair.Value != null, "Variable '{0}': The type '{1}' is not supported.", pair.Key, pair.Value.GetType());
+                Guard.Require("initialValues", !String.IsNullOrEmpty(pair.Key), "Variable must have a name.");
 
+                Guard.Require("initialValues", pair.Value != null, "Variable '{0}': The type '{1}' is not supported.", pair.Key, pair.Value.GetType());
                 varNames[i] = pair.Key;
                 string varValue;
                 if (TessConvert.TryToString(pair.Value, out varValue))
@@ -396,8 +656,8 @@ namespace Tesseract.Interop
                 else
                 {
                     throw new ArgumentException(
-                        string.Format("Variable '{0}': The type '{1}' is not supported.", pair.Key, pair.Value.GetType()),
-                        nameof(initialValues)
+                        String.Format("Variable '{0}': The type '{1}' is not supported.", pair.Key, pair.Value.GetType()),
+                        "initialValues"
                     );
                 }
                 i++;
@@ -407,5 +667,93 @@ namespace Tesseract.Interop
                 configFilesArray, configFilesArray.Length,
                 varNames, varValues, new UIntPtr((uint)varNames.Length), setOnlyNonDebugParams);
         }
+
+        public static int BaseApiSetDebugVariable(HandleRef handle, string name, string value)
+        {
+            IntPtr valuePtr = IntPtr.Zero;
+            try
+            {
+                valuePtr = MarshalHelper.StringToPtr(value, Encoding.UTF8);
+                return Native.BaseApiSetDebugVariable(handle, name, valuePtr);
+            }
+            finally
+            {
+                if (valuePtr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(valuePtr);
+                }
+            }
+        }
+
+        public static int BaseApiSetVariable(HandleRef handle, string name, string value)
+        {
+            IntPtr valuePtr = IntPtr.Zero;
+            try
+            {
+                valuePtr = MarshalHelper.StringToPtr(value, Encoding.UTF8);
+                return Native.BaseApiSetVariable(handle, name, valuePtr);
+            }
+            finally
+            {
+                if (valuePtr != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(valuePtr);
+                }
+            }
+        }
+
+        public static void Initialize()
+        {
+            if (native == null)
+            {
+                LeptonicaApi.Initialize();
+                native = Constants.Loader.CreateInstance<ITessApiSignatures>();
+            }
+        }
+
+        public static string ResultIteratorWordRecognitionLanguage(HandleRef handle)
+        {
+            // per docs (ltrresultiterator.h:118 as of 4897796 in github:tesseract-ocr/tesseract)
+            // this return value should *NOT* be deleted.
+            IntPtr txtHandle =
+                Native.ResultIteratorWordRecognitionLanguageInternal(handle);
+
+            return txtHandle != IntPtr.Zero
+                ? MarshalHelper.PtrToString(txtHandle, Encoding.UTF8)
+                : null;
+        }
+
+        public static string ResultIteratorGetUTF8Text(HandleRef handle, PageIteratorLevel level)
+        {
+            IntPtr txtHandle = Native.ResultIteratorGetUTF8TextInternal(handle, level);
+            if (txtHandle != IntPtr.Zero)
+            {
+                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+                TessApi.Native.DeleteText(txtHandle);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns the null terminated UTF-8 encoded text string for the current choice
+        /// </summary>
+        /// <remarks>
+        /// NOTE: Unlike LTRResultIterator::GetUTF8Text, the return points to an
+        /// internal structure and should NOT be delete[]ed to free after use.
+        /// </remarks>
+        /// <param name="choiceIteratorHandle"></param>
+        /// <returns>string</returns>
+        internal static string ChoiceIteratorGetUTF8Text(HandleRef choiceIteratorHandle)
+        {
+            Guard.Require("choiceIteratorHandle", choiceIteratorHandle.Handle != IntPtr.Zero, "ChoiceIterator Handle cannot be a null IntPtr and is required");
+            IntPtr txtChoiceHandle = Native.ChoiceIteratorGetUTF8TextInternal(choiceIteratorHandle);
+            return MarshalHelper.PtrToString(txtChoiceHandle, Encoding.UTF8);
+        }
+
+        // hOCR Extension
     }
 }
