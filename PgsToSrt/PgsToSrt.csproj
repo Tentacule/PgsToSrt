@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -20,10 +20,8 @@
     <PackageReference Include="NLog" Version="4.7.5" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.6.5" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Tesseract\Tesseract.csproj" />
+    <PackageReference Include="Tesseract" Version="4.1.1" />
+    <PackageReference Include="Tncl.NativeLoader" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>
