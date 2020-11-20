@@ -2,6 +2,7 @@
 using Nikse.SubtitleEdit.Core;
 using Nikse.SubtitleEdit.Core.BluRaySup;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
+using PgsToSrt;
 using PgsToSrt.BluRaySup;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -58,6 +59,8 @@ public class PgsOcr
         _logger.LogInformation($"Starting OCR for {_bluraySubtitles.Count} items...");
         try
         {
+            TesseractApi.Initialize();
+
             using (var engine = new TesseractEngine(TesseractDataPath, TesseractLanguage, EngineMode.TesseractOnly))
             {
                 for (var i = 0; i < _bluraySubtitles.Count; i++)
