@@ -21,7 +21,7 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.6.5" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
     <PackageReference Include="Tesseract" Version="4.1.1" />
-    <PackageReference Include="Tncl.NativeLoader" Version="1.0.3" />
+    <PackageReference Include="Tncl.NativeLoader" Version="1.0.4" />
   </ItemGroup>
 
   <ItemGroup>
