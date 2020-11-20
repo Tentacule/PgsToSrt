@@ -3,8 +3,8 @@
 Convert pgs subtitles to srt using OCR.
 
 ### Prerequisites
-- [.NET Core 2.1 Runtime](https://dotnet.microsoft.com/download/dotnet-core/2.1)
-- [Tesseract 3.04/3.05 language data files](https://github.com/tesseract-ocr/tessdata/tree/3.04.00)
+- [.NET 5.0 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [Tesseract 4 language data files](https://github.com/tesseract-ocr/tessdata/)
 
 Data files must be placed in a _tessdata_ folder inside PgsToSrt folder, or the path can be specified in the command line with the --tesseractdata parameter.
 
@@ -38,7 +38,7 @@ docker run -it --rm -v /data:/data \
 
 ### Dependencies
 - Windows : none, tesseract/leptonica libraries are included in the release package.
-- Linux   : libtesseract3 (`sudo apt install libtesseract3`)
+- Linux   : libtesseract4 (`sudo apt install libtesseract4`)
 
 ### Build
 To build PgsToSrt.dll execute this commands
