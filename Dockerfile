@@ -7,7 +7,7 @@ RUN apt-get update && \
 COPY . /src
 RUN cd /src && \
     dotnet restore  && \
-    dotnet publish -c Release -o out && \
+    dotnet publish -c Release -o /src/PgsToSrt/out && \
     mv /src/entrypoint.sh /entrypoint.sh && chmod +x /entrypoint.sh && \
     mv /src/PgsToSrt/out  /app
 
