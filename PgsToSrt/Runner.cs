@@ -63,7 +63,7 @@ namespace PgsToSrt
                 }
                 else if (!string.IsNullOrEmpty(trackLanguage))
                 {
-                    var runnerOptionLanguages = MkvUtilities.GetTracksByLanguage(input, trackLanguage);
+                    var runnerOptionLanguages = MkvUtilities.GetTracksByLanguage(input, trackLanguage, output);
                     foreach (var item in runnerOptionLanguages)
                     {
                         trackOptions.Add(new TrackOption() { Input = input, Output = item.Output, Track = item.Track });
@@ -76,17 +76,8 @@ namespace PgsToSrt
             }
             else
             {
-                trackOptions.Add(new TrackOption() { Input = input, Output = output, Track = null });
-            }
-
-            if (!string.IsNullOrEmpty(output))
-            {
-                var outputDirectory = Path.GetDirectoryName(output);
-                if (!Directory.Exists(outputDirectory))
-                {
-                    _logger.LogError($"Output directory '{outputDirectory}' doesn't exist.");
-                    result = false;
-                }
+                var outputFilename = MkvUtilities.GetBaseDefaultOutputFilename(input, output) + ".srt";
+                trackOptions.Add(new TrackOption() { Input = input, Output = outputFilename, Track = null });
             }
 
             if (Directory.Exists(_tesseractData))
@@ -111,13 +102,10 @@ namespace PgsToSrt
         private bool ConvertPgs(string input, int? track, string output)
         {
             var pgsParser = new PgsParser(_logger);
-            var (subtitles, defaultOutputFilename) = pgsParser.Load(input, track.GetValueOrDefault());
+            var subtitles = pgsParser.Load(input, track.GetValueOrDefault(), output);
 
             if (subtitles is null)
                 return false;
-
-            if (string.IsNullOrEmpty(output))
-                output = defaultOutputFilename;
 
             var pgsOcr = new PgsOcr(_logger)
             {
@@ -128,6 +116,6 @@ namespace PgsToSrt
             pgsOcr.ToSrt(subtitles, output);
 
             return true;
-        }    
+        }             
     }
 }

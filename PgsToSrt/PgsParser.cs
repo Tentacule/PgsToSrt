@@ -18,29 +18,27 @@ namespace PgsToSrt
             _logger = logger;
         }
 
-        public (List<PcsData> pcsDataList, string defaultOutputFilename) Load(string filename, int track)
+        public List<PcsData> Load(string filename, int track, string output)
         {
             List<PcsData> pcsDataList = null;
-            string defaultOutputFilename = null;
 
             if (Path.GetExtension(filename.ToLowerInvariant()) == ".sup")
-                (pcsDataList, defaultOutputFilename) = LoadSup(filename);
+                pcsDataList = LoadSup(filename, output);
             else if (Path.GetExtension(filename.ToLowerInvariant()) == ".mkv")
-                (pcsDataList, defaultOutputFilename) = LoadMkv(filename, track);
+                pcsDataList = LoadMkv(filename, track, output);
 
-            return (pcsDataList, defaultOutputFilename);
+            return pcsDataList;
         }
 
-        private static (List<PcsData> pcsDataList, string defaultOutputFilename) LoadSup(string filename)
+        private static List<PcsData> LoadSup(string filename, string output)
         {
-            return (pcsDataList: LoadSubtitles(filename), Path.ChangeExtension(filename, ".srt"));
+            return LoadSubtitles(filename);
         }
 
-        private (List<PcsData> pcsDataList, string defaultOutputFilename) LoadMkv(string filename, int trackNumber)
+        private List<PcsData> LoadMkv(string filename, int trackNumber, string output)
         {
             List<PcsData> result = null;
-            string defaultOutputFilename = null;
-
+          
             using (var matroska = new MatroskaFile(filename))
             {
                 if (matroska.IsValid)
@@ -49,8 +47,7 @@ namespace PgsToSrt
                     var track = (from t in pgsTracks where t.TrackNumber == trackNumber select t).FirstOrDefault();
 
                     if (track != null)
-                    {
-                        defaultOutputFilename = MkvUtilities.GetDefaultOutputFilename(filename, track, null);
+                    {                     
                         result = LoadSubtitles(matroska, track);
                     }
                     else
@@ -65,7 +62,7 @@ namespace PgsToSrt
                 }
             }
 
-            return (pcsDataList: result, defaultOutputFilename: defaultOutputFilename);
+            return result;
         }
 
         private void ShowPgsTracks(string filename, IReadOnlyCollection<MatroskaTrackInfo> pgsTracks)

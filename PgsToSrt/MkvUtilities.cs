@@ -16,14 +16,14 @@ namespace PgsToSrt
             return filename.EndsWith(".mkv", StringComparison.OrdinalIgnoreCase);
         }
 
-        internal static string GetDefaultOutputFilename(List<TrackOutputOption> trackOutputOptions, string filename, MatroskaTrackInfo track)
+        internal static string GetDefaultOutputFilename(List<TrackOutputOption> trackOutputOptions, string filename, MatroskaTrackInfo track, string output)
         {
             string result = null;
             int? number = null;
 
             while (true)
             {
-                var defaultOutputFilename = GetDefaultOutputFilename(filename, track, number);
+                var defaultOutputFilename = GetDefaultOutputFilename(filename, track, number, output);
                 var existing = (
                     from t in trackOutputOptions
                     where string.Equals(t.Output, defaultOutputFilename, StringComparison.OrdinalIgnoreCase)
@@ -46,16 +46,33 @@ namespace PgsToSrt
             return result;
         }
 
-        internal static string GetDefaultOutputFilename(string filename, MatroskaTrackInfo track, int? number)
+        internal static string GetDefaultOutputFilename(string filename, MatroskaTrackInfo track, int? number, string output)
         {
+            var defaultOutputFilename = GetBaseDefaultOutputFilename(filename, output) + "." + track.Language + number + (track.IsForced ? ".forced" : "") + ".srt";
+            return defaultOutputFilename;
+        }
+
+        internal static string GetBaseDefaultOutputFilename(string filename, string output)
+        {
+            string outputDirectory;
+
+            if (output != null && output.EndsWith(Path.DirectorySeparatorChar))
+            {
+                outputDirectory = output;
+            }
+            else
+            {
+                outputDirectory = Path.GetDirectoryName(filename);
+            }
+
             var defaultOutputFilename = Path.Combine(
-                   Path.GetDirectoryName(filename),
-                   Path.GetFileNameWithoutExtension(filename) + "." + track.Language + number + (track.IsForced ? ".forced" : "") + ".srt");
+                outputDirectory,
+                Path.GetFileNameWithoutExtension(filename));
 
             return defaultOutputFilename;
         }
 
-        internal static List<TrackOutputOption> GetTracksByLanguage(string filename, string trackLanguage)
+        internal static List<TrackOutputOption> GetTracksByLanguage(string filename, string trackLanguage, string output)
         {
             var result = new List<TrackOutputOption>();
 
@@ -68,7 +85,7 @@ namespace PgsToSrt
 
                     foreach (var track in tracks)
                     {
-                        var defaultOutputFilename = GetDefaultOutputFilename(result, filename, track);
+                        var defaultOutputFilename = GetDefaultOutputFilename(result, filename, track, output);
                         result.Add(new TrackOutputOption() { Track = track.TrackNumber, Output = defaultOutputFilename });
                     }
                 }
