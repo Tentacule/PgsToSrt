@@ -54,9 +54,7 @@ namespace PgsToSrt
                     {
                         defaultOutputFilename = Path.Combine(
                             Path.GetDirectoryName(filename),
-                            Path.GetFileNameWithoutExtension(filename),
-                            track.Language + (track.IsForced ? ".forced" : ""),
-                            ".srt");
+                            Path.GetFileNameWithoutExtension(filename) + "." + track.Language + (track.IsForced ? ".forced" : "") + ".srt");
 
                         result = LoadSubtitles(matroska, track);
                     }
