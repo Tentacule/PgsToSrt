@@ -1,6 +1,8 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.Logging;
+using PgsToSrt.Options;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace PgsToSrt
@@ -8,11 +10,6 @@ namespace PgsToSrt
     internal class Runner
     {
         private readonly ILogger _logger;
-
-        private string _input;
-        private int? _track;
-
-        private string _output;
 
         private string _tesseractData;
         private string _tesseractLanguage;
@@ -22,48 +19,65 @@ namespace PgsToSrt
             _logger = logger;
         }
 
-        public bool Run(Parsed<CommandLineOptions> values)
+        public void Run(Parsed<CommandLineOptions> values)
         {
-            var result = false;
-
-            if (values != null && CheckArguments(values))
+            if (values != null)
             {
-                result = ConvertPgs();
-            }
+                var (argumentChecked, runnerOptions) = GetTrackOptions(values);
 
-            return result;
+                if (argumentChecked)
+                {
+                    foreach (var runnerOption in runnerOptions)
+                    {
+                        ConvertPgs(runnerOption.Input, runnerOption.Track, runnerOption.Output);
+                    }
+                }
+            }
         }
 
-        private bool CheckArguments(Parsed<CommandLineOptions> values)
+        private (bool result, List<TrackOption> trackOptions) GetTrackOptions(Parsed<CommandLineOptions> values)
         {
             var result = true;
-            _input = values.Value.Input;
-            _output = values.Value.Output;
-            _track = values.Value.Track;
+            var trackOptions = new List<TrackOption>();
+            var input = values.Value.Input;
+            var output = values.Value.Output;
+            var trackLanguage = values.Value.TrackLanguage;
+            var track = values.Value.Track;
+
             _tesseractData = !string.IsNullOrEmpty(values.Value.TesseractData)
                 ? values.Value.TesseractData
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tessdata");
 
             if (!File.Exists(values.Value.Input))
             {
-                _logger.LogError($"Input file '{_input}' doesn't exist.");
+                _logger.LogError($"Input file '{input}' doesn't exist.");
                 result = false;
             }
 
-            if (!_track.HasValue && IsMkvFile(_input))
+            if (MkvUtilities.IsMkvFile(input))
             {
-                _logger.LogError("Track must be set when input in an mkv file.");
-                result = false;
-            }
-                       
-            if (!string.IsNullOrEmpty(_output))
-            {
-                var outputDirectory = Path.GetDirectoryName(_output);
-                if (!Directory.Exists(outputDirectory))
+                if (string.IsNullOrEmpty(trackLanguage) && !track.HasValue)
                 {
-                    _logger.LogError($"Output directory '{outputDirectory}' doesn't exist.");
+                    _logger.LogError("Track must be set when input is an mkv file.");
                     result = false;
                 }
+                else if (!string.IsNullOrEmpty(trackLanguage))
+                {
+                    var runnerOptionLanguages = MkvUtilities.GetTracksByLanguage(input, trackLanguage, output);
+                    foreach (var item in runnerOptionLanguages)
+                    {
+                        trackOptions.Add(new TrackOption() { Input = input, Output = item.Output, Track = item.Track });
+                    }
+                }
+                else
+                {
+                    trackOptions.Add(new TrackOption() { Input = input, Output = output, Track = track });
+                }
+            }
+            else
+            {
+                var outputFilename = MkvUtilities.GetBaseDefaultOutputFilename(input, output) + ".srt";
+                trackOptions.Add(new TrackOption() { Input = input, Output = outputFilename, Track = null });
             }
 
             if (Directory.Exists(_tesseractData))
@@ -82,19 +96,16 @@ namespace PgsToSrt
                 result = false;
             }
 
-            return result;
+            return (result, trackOptions: trackOptions);
         }
 
-        private bool ConvertPgs()
+        private bool ConvertPgs(string input, int? track, string output)
         {
             var pgsParser = new PgsParser(_logger);
-            var (subtitles, defaultOutputFilename) = pgsParser.Load(_input, _track.GetValueOrDefault());
+            var subtitles = pgsParser.Load(input, track.GetValueOrDefault(), output);
 
             if (subtitles is null)
                 return false;
-
-            if (string.IsNullOrEmpty(_output))
-                _output = defaultOutputFilename;
 
             var pgsOcr = new PgsOcr(_logger)
             {
@@ -102,14 +113,9 @@ namespace PgsToSrt
                 TesseractLanguage = _tesseractLanguage
             };
 
-            pgsOcr.ToSrt(subtitles, _output);
+            pgsOcr.ToSrt(subtitles, output);
 
             return true;
-        }
-
-        private static bool IsMkvFile(string filename)
-        {
-            return filename.EndsWith(".mkv", StringComparison.OrdinalIgnoreCase);
-        }
+        }             
     }
 }

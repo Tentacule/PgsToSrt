@@ -31,8 +31,8 @@ namespace PgsToSrt
 
                 var runner = servicesProvider.GetRequiredService<Runner>();
 
-                if (runner.Run(values))
-                    Console.Write("Done.");
+                runner.Run(values);
+                Console.Write("Done.");
             }
         }
     }
