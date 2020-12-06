@@ -44,24 +44,26 @@ namespace PgsToSrt
                 ? values.Value.TesseractData
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "tessdata");
 
-            var outputDirectory = Path.GetDirectoryName(_output);
-
             if (!File.Exists(values.Value.Input))
             {
                 _logger.LogError($"Input file '{_input}' doesn't exist.");
                 result = false;
             }
 
-            if (!_track.HasValue && _input.ToLowerInvariant().EndsWith(".mkv"))
+            if (!_track.HasValue && IsMkvFile(_input))
             {
                 _logger.LogError("Track must be set when input in an mkv file.");
                 result = false;
             }
-
-            if (!Directory.Exists(outputDirectory))
+                       
+            if (!string.IsNullOrEmpty(_output))
             {
-                _logger.LogError($"Output directory '{outputDirectory}' doesn't exist.");
-                result = false;
+                var outputDirectory = Path.GetDirectoryName(_output);
+                if (!Directory.Exists(outputDirectory))
+                {
+                    _logger.LogError($"Output directory '{outputDirectory}' doesn't exist.");
+                    result = false;
+                }
             }
 
             if (Directory.Exists(_tesseractData))
@@ -86,10 +88,13 @@ namespace PgsToSrt
         private bool ConvertPgs()
         {
             var pgsParser = new PgsParser(_logger);
-            var subtitles = pgsParser.Load(_input, _track.GetValueOrDefault());
+            var (subtitles, defaultOutputFilename) = pgsParser.Load(_input, _track.GetValueOrDefault());
 
             if (subtitles is null)
                 return false;
+
+            if (string.IsNullOrEmpty(_output))
+                _output = defaultOutputFilename;
 
             var pgsOcr = new PgsOcr(_logger)
             {
@@ -100,6 +105,11 @@ namespace PgsToSrt
             pgsOcr.ToSrt(subtitles, _output);
 
             return true;
+        }
+
+        private static bool IsMkvFile(string filename)
+        {
+            return filename.EndsWith(".mkv", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

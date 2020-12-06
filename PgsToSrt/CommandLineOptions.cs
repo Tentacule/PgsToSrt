@@ -10,7 +10,7 @@ namespace PgsToSrt
         [Option(HelpText = "Track number of the PGS subtitle to use, only needed when input is an .mkv file.")]
         public int? Track { get; set; }
 
-        [Option(Required = true, HelpText = "Output .srt filename.")]
+        [Option(Required = false, HelpText = "Output .srt filename.")]
         public string Output { get; set; }
 
         [Option(HelpText = "Tesseract language to use if multiple languages are available in the tesseract data directory.")]
