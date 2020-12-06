@@ -7,6 +7,9 @@ namespace PgsToSrt
         [Option(Required = true, HelpText = "Input filename, it can be a .mkv or a .sup extracted with mkvextract.")]
         public string Input { get; set; }
 
+        [Option(HelpText = "Track language.")]
+        public string TrackLanguage { get; set; }
+
         [Option(HelpText = "Track number of the PGS subtitle to use, only needed when input is an .mkv file.")]
         public int? Track { get; set; }
 
