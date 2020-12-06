@@ -20,26 +20,28 @@ namespace PgsToSrt
             _logger = logger;
         }
 
-        public List<BluRaySupParser.PcsData> Load(string filename, int track)
+        public (List<BluRaySupParser.PcsData> pcsDataList, string defaultOutputFilename) Load(string filename, int track)
         {
-            List<BluRaySupParser.PcsData> result = null;
+            List<BluRaySupParser.PcsData> pcsDataList = null;
+            string defaultOutputFilename = null;
 
             if (Path.GetExtension(filename.ToLowerInvariant()) == ".sup")
-                result = LoadSup(filename);
+                (pcsDataList, defaultOutputFilename) = LoadSup(filename);
             else if (Path.GetExtension(filename.ToLowerInvariant()) == ".mkv")
-                result = LoadMkv(filename, track);
+                (pcsDataList, defaultOutputFilename) = LoadMkv(filename, track);
 
-            return result;
+            return (pcsDataList, defaultOutputFilename);
         }
 
-        private List<BluRaySupParser.PcsData> LoadSup(string filename)
+        private (List<BluRaySupParser.PcsData> pcsDataList, string defaultOutputFilename) LoadSup(string filename)
         {
-            return LoadSubtitles(filename);
+            return (pcsDataList: LoadSubtitles(filename), Path.ChangeExtension(filename, ".srt"));
         }
 
-        private List<BluRaySupParser.PcsData> LoadMkv(string filename, int trackNumber)
+        private (List<BluRaySupParser.PcsData> pcsDataList, string defaultOutputFilename) LoadMkv(string filename, int trackNumber)
         {
             List<BluRaySupParser.PcsData> result = null;
+            string defaultOutputFilename = null;
 
             using (var matroska = new MatroskaFile(filename))
             {
@@ -50,6 +52,12 @@ namespace PgsToSrt
 
                     if (track != null)
                     {
+                        defaultOutputFilename = Path.Combine(
+                            Path.GetDirectoryName(filename),
+                            Path.GetFileNameWithoutExtension(filename),
+                            track.Language + (track.IsForced ? ".forced" : ""),
+                            ".srt");
+
                         result = LoadSubtitles(matroska, track);
                     }
                     else
@@ -64,7 +72,7 @@ namespace PgsToSrt
                 }
             }
 
-            return result;
+            return (pcsDataList: result, defaultOutputFilename: defaultOutputFilename);
         }
 
         private void ShowPgsTracks(string filename, IReadOnlyCollection<MatroskaTrackInfo> pgsTracks)
@@ -77,13 +85,13 @@ namespace PgsToSrt
             }
         }
 
-        public List<BluRaySupParser.PcsData> LoadSubtitles(string supFileName)
+        public static List<BluRaySupParser.PcsData> LoadSubtitles(string supFileName)
         {
             var log = new StringBuilder();
             return BluRaySupParser.ParseBluRaySup(supFileName, log);
         }
 
-        public List<BluRaySupParser.PcsData> LoadSubtitles(string mkvFileName, int trackNumber)
+        public static List<BluRaySupParser.PcsData> LoadSubtitles(string mkvFileName, int trackNumber)
         {
             List<BluRaySupParser.PcsData> result = null;
 
@@ -113,7 +121,7 @@ namespace PgsToSrt
             return result;
         }
 
-        public List<MatroskaTrackInfo> GetPgsSubtitleTracks(MatroskaFile matroska)
+        public static List<MatroskaTrackInfo> GetPgsSubtitleTracks(MatroskaFile matroska)
         {
             var result = new List<MatroskaTrackInfo>();
 
