@@ -17,7 +17,7 @@ dotnet PgsToSrt.dll [parameters]
 | Parameters &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;        |                |
 | :---------------      | :------------- |
 | --input            | Input filename, can be an mkv file or pgs subtitle extracted to a .sup file with mkvextract.|
-| --output           | Output Subrip (.srt) filename.|
+| --output           | Output Subrip (.srt) filename. Auto generated from input filename if not set.|
 | --track            | Track number of the subtitle to process in an mkv file (only required when input is a matroska file) <br/>This can be obtained with mkvinfo |
 | --tesseractlanguage| Tesseract language to use if multiple languages are available in the tesseract data directory.        |
 | --tesseractdata    | Path of tesseract language data files, by default 'tessdata' in the executable directory.             |
