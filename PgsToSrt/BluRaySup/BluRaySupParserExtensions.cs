@@ -10,7 +10,7 @@ namespace PgsToSrt.BluRaySup
 {
     public static class BluRaySupParserExtensions
     {
-        public static Image<Rgba32> GetRgba32(this BluRaySupParser.PcsData pcsData)
+        public static Image<Rgba32> GetRgba32(this PcsData pcsData)
         {
             if (pcsData.PcsObjects.Count == 1)
                 return SupDecoder.DecodeImage(pcsData.PcsObjects[0], pcsData.BitmapObjects[0], pcsData.PaletteInfos);
@@ -38,57 +38,6 @@ namespace PgsToSrt.BluRaySup
 
     static class SupDecoder
     {
-        private const int AlphaCrop = 14;
-
-        public static BluRaySupPalette DecodePalette(IList<PaletteInfo> paletteInfos)
-        {
-            var palette = new BluRaySupPalette(256);
-            // by definition, index 0xff is always completely transparent
-            // also all entries must be fully transparent after initialization
-
-            bool fadeOut = false;
-            for (int j = 0; j < paletteInfos.Count; j++)
-            {
-                var p = paletteInfos[j];
-                int index = 0;
-
-                for (int i = 0; i < p.PaletteSize; i++)
-                {
-                    // each palette entry consists of 5 bytes
-                    int palIndex = p.PaletteBuffer[index];
-                    int y = p.PaletteBuffer[++index];
-                    int cr = p.PaletteBuffer[++index];
-                    int cb = p.PaletteBuffer[++index];
-                    int alpha = p.PaletteBuffer[++index];
-
-                    int alphaOld = palette.GetAlpha(palIndex);
-                    // avoid fading out
-                    if (alpha >= alphaOld)
-                    {
-                        if (alpha < AlphaCrop)
-                        {// to not mess with scaling algorithms, make transparent color black
-                            y = 16;
-                            cr = 128;
-                            cb = 128;
-                        }
-                        palette.SetAlpha(palIndex, alpha);
-                    }
-                    else
-                    {
-                        fadeOut = true;
-                    }
-
-                    palette.SetYCbCr(palIndex, y, cb, cr);
-                    index++;
-                }
-            }
-            if (fadeOut)
-            {
-                System.Diagnostics.Debug.Print("fade out detected -> patched palette\n");
-            }
-            return palette;
-        }
-
         /// <summary>
         /// Decode caption from the input stream
         /// </summary>
@@ -101,7 +50,7 @@ namespace PgsToSrt.BluRaySup
             int w = data[0].Size.Width;
             int h = data[0].Size.Height;
 
-            var pal = DecodePalette(palettes);
+            var pal = BluRaySupParser.SupDecoder.DecodePalette(palettes);
             var bm = new Image<Rgba32>(w, h);
             bm.TryGetSinglePixelSpan(out var pixelSpan);
 
