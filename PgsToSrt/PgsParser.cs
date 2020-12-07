@@ -78,7 +78,7 @@ namespace PgsToSrt
         public static List<PcsData> LoadSubtitles(string supFileName)
         {
             var log = new StringBuilder();
-            return BluRaySupParser.ParseBluRaySup(supFileName, log);
+            return ParseBluRaySup(supFileName, log);
         }
 
         public static List<PcsData> LoadSubtitles(MatroskaFile matroska, MatroskaTrackInfo track)
@@ -153,7 +153,7 @@ namespace PgsToSrt
                 var segmentType = buffer[position];
                 if (segmentType == epochStart)
                     return true;
-                var length = BluRaySupParser.BigEndianInt16(buffer, position + 1) + 3;
+                var length = BigEndianInt16(buffer, position + 1) + 3;
                 position += length;
             }
             return false;
