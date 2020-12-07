@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Reflection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using System;
+using System.Reflection;
 
 namespace PgsToSrt
 {
