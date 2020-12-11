@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:5.0.101-focal-amd64 AS builder
 
 RUN apt-get update && \
     apt-get install -y automake ca-certificates g++ git libtool libtesseract4 make pkg-config libc6-dev && \
@@ -15,4 +15,6 @@ ENV LANGUAGE=eng
 ENV INPUT=/input.sup
 ENV OUTPUT=/output.srt
 VOLUME /tessdata
+
+# EOL must be LF to works on Docker for Windows.
 ENTRYPOINT /entrypoint.sh
