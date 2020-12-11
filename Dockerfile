@@ -9,12 +9,12 @@ RUN cd /src && \
     dotnet restore  && \
     dotnet publish -c Release -o /src/PgsToSrt/out && \
     mv /src/entrypoint.sh /entrypoint.sh && chmod +x /entrypoint.sh && \
-    mv /src/PgsToSrt/out  /app
+    mv /src/PgsToSrt/out /app
 
 ENV LANGUAGE=eng
 ENV INPUT=/input.sup
 ENV OUTPUT=/output.srt
 VOLUME /tessdata
 
-# EOL must be LF to works on Docker for Windows.
+# Docker for Windows: EOL must be LF.
 ENTRYPOINT /entrypoint.sh
