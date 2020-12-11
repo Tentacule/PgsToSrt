@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS builder
 
 RUN apt-get update && \
-    apt-get install -y automake ca-certificates g++ git libtool libtesseract4 make pkg-config && \
+    apt-get install -y automake ca-certificates g++ git libtool libtesseract4 make pkg-config libc6-dev && \
     cd / && git clone https://github.com/tesseract-ocr/tessdata
 
 COPY . /src
