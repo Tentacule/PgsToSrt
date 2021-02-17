@@ -23,7 +23,7 @@ namespace PgsToSrt
                 var servicesProvider = new ServiceCollection()
                     .AddLogging(builder =>
                     {
-                        builder.SetMinimumLevel(LogLevel.Trace);
+                        builder.SetMinimumLevel(LogLevel.Debug);
                         builder.AddNLog();
                     })
                     .AddTransient<Runner>()
