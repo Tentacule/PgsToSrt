@@ -57,42 +57,40 @@ public class PgsOcr
     private bool DoOcr()
     {
         _logger.LogInformation($"Starting OCR for {_bluraySubtitles.Count} items...");
-        try
+
+        var exception = TesseractApi.Initialize();
+        if (exception != null)
         {
-            TesseractApi.Initialize();
-
-            using (var engine = new TesseractEngine(TesseractDataPath, TesseractLanguage, EngineMode.TesseractOnly))
-            {
-                for (var i = 0; i < _bluraySubtitles.Count; i++)
-                {
-                    var item = _bluraySubtitles[i];
-
-                    var paragraph = new Paragraph
-                    {
-                        Number = i + 1,
-                        StartTime = new TimeCode(item.StartTime / 90.0),
-                        EndTime = new TimeCode(item.EndTime / 90.0),
-                        Text = GetText(engine, i)
-                    };
-
-                    _subtitle.Paragraphs.Add(paragraph);
-
-                    if (i % 50 == 0)
-                    {
-                        _logger.LogInformation($"Processed item {paragraph.Number}.");
-                    }
-                }
-
-                _logger.LogInformation("Finished OCR.");
-                return true;
-            }
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Error: " + e.Message + e.StackTrace);
-
+            _logger.LogError(exception, $"Failed: {exception.Message}");
             return false;
         }
+
+        using (var engine = new TesseractEngine(TesseractDataPath, TesseractLanguage, EngineMode.TesseractOnly))
+        {
+            for (var i = 0; i < _bluraySubtitles.Count; i++)
+            {
+                var item = _bluraySubtitles[i];
+
+                var paragraph = new Paragraph
+                {
+                    Number = i + 1,
+                    StartTime = new TimeCode(item.StartTime / 90.0),
+                    EndTime = new TimeCode(item.EndTime / 90.0),
+                    Text = GetText(engine, i)
+                };
+
+                _subtitle.Paragraphs.Add(paragraph);
+
+                if (i % 50 == 0)
+                {
+                    _logger.LogInformation($"Processed item {paragraph.Number}.");
+                }
+            }
+
+            _logger.LogInformation("Finished OCR.");
+        }
+
+        return true;
     }
 
     private string GetText(TesseractEngine engine, int index)

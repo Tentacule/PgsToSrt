@@ -13,8 +13,10 @@ namespace PgsToSrt
     {
         private const string _assemblyName = "Assembly.Tesseract";
 
-        public static void Initialize()
+        public static Exception Initialize()
         {
+            Exception exception = null;
+
             var tessApiType = typeof(Tesseract.Page).Assembly.GetType("Tesseract.Interop.TessApi");
             var leptApiType = typeof(Tesseract.Page).Assembly.GetType("Tesseract.Interop.LeptonicaApi");
 
@@ -24,11 +26,24 @@ namespace PgsToSrt
             var loader = new NativeLoader();
             loader.WindowsOptions.UseSetDllDirectory = true;
 
-            var tessApiInstance = (ITessApiSignatures)loader.CreateInstance(tessApiCustomType);
-            var leptApiInstance = (ILeptonicaApiSignatures)loader.CreateInstance(leptApiCustomType);
+            try
+            {
+                var tessApiInstance = (ITessApiSignatures)loader.CreateInstance(tessApiCustomType);
+                var leptApiInstance = (ILeptonicaApiSignatures)loader.CreateInstance(leptApiCustomType);
 
-            tessApiType.GetField("native", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, tessApiInstance);
-            leptApiType.GetField("native", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, leptApiInstance);
+                tessApiType.GetField("native", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, tessApiInstance);
+                leptApiType.GetField("native", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, leptApiInstance);
+            }
+            catch (TargetInvocationException e)
+            {
+                exception = e.InnerException;
+            }
+            catch (Exception e)
+            {
+                exception = e;
+            }
+
+            return exception;
         }
 
         public static Type CreateInterfaceType<T>(string windowsLibraryName, string commonLibraryName, string version)
