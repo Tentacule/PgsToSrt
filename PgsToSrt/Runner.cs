@@ -58,7 +58,7 @@ namespace PgsToSrt
             {
                 if (string.IsNullOrEmpty(trackLanguage) && !track.HasValue)
                 {
-                    _logger.LogError("Track must be set when input is an mkv file.");
+                    _logger.LogError("Track must be set when input is an mkv/s file.");
                     result = false;
                 }
                 else if (!string.IsNullOrEmpty(trackLanguage))

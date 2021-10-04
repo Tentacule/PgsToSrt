@@ -24,7 +24,7 @@ namespace PgsToSrt
 
             if (Path.GetExtension(filename.ToLowerInvariant()) == ".sup")
                 pcsDataList = LoadSup(filename, output);
-            else if (Path.GetExtension(filename.ToLowerInvariant()) == ".mkv")
+            else if (MkvUtilities.IsMkvFile(filename))
                 pcsDataList = LoadMkv(filename, track, output);
 
             return pcsDataList;
@@ -38,7 +38,7 @@ namespace PgsToSrt
         private List<PcsData> LoadMkv(string filename, int trackNumber, string output)
         {
             List<PcsData> result = null;
-          
+
             using (var matroska = new MatroskaFile(filename))
             {
                 if (matroska.IsValid)
@@ -47,7 +47,7 @@ namespace PgsToSrt
                     var track = (from t in pgsTracks where t.TrackNumber == trackNumber select t).FirstOrDefault();
 
                     if (track != null)
-                    {                     
+                    {
                         result = LoadSubtitles(matroska, track);
                     }
                     else

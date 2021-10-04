@@ -10,10 +10,11 @@ namespace PgsToSrt
     internal static class MkvUtilities
     {
         private const string _pgsTrackCodecId = "S_HDMV/PGS";
+        private static readonly string[] _mkvExtensions = { ".mkv", ".mks" };
 
         internal static bool IsMkvFile(string filename)
         {
-            return filename.EndsWith(".mkv", StringComparison.OrdinalIgnoreCase);
+            return _mkvExtensions.Contains(Path.GetExtension(filename), StringComparer.OrdinalIgnoreCase);
         }
 
         internal static string GetDefaultOutputFilename(List<TrackOutputOption> trackOutputOptions, string filename, MatroskaTrackInfo track, string output)
