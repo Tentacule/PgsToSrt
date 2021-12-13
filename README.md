@@ -4,7 +4,7 @@ Convert pgs subtitles to srt using OCR.
 
 ### Prerequisites
 - [.NET 5.0 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0)
-- [Tesseract 4 language data files](https://github.com/tesseract-ocr/tessdata/)
+- Linux: [Tesseract 3 language data files](https://github.com/tesseract-ocr/tessdata/)
 
 Data files must be placed in a _tessdata_ folder inside PgsToSrt folder, or the path can be specified in the command line with the --tesseractdata parameter.
 
@@ -39,7 +39,7 @@ docker run -it --rm -v /data:/data \
 
 ### Dependencies
 - Windows : none, tesseract/leptonica libraries are included in the release package.
-- Linux   : libtesseract4 (`sudo apt install libtesseract4`)
+- Linux   : libtesseract4 (`sudo apt install libtesseract4`) and tessdata (`git clone https://github.com/tesseract-ocr/tessdata.git --branch 3.04.00`)
 
 ### Build
 To build PgsToSrt.dll execute this commands
@@ -48,6 +48,21 @@ dotnet restore
 dotnet publish -c Release -o out
 #The file is on  PgsToSrt/out/PgsToSrt.dll
 ```
+
+On macOS or Linux, follow [Microsoft's directions for downloading and installing the .NET runtime](https://docs.microsoft.com/en-us/dotnet/core/install/).  However, be sure to install .NET 5 and not the current version.  For example, after following their Ubuntu instructions, run this command to install the correct version:
+```bash
+sudo apt install dotnet-runtime-5.0
+```
+
+Then, download the Tesseract 3.04 data files.  Do not use the `tesseract-ocr-*` packages from your package manager, as they might be a newer, incompatible version.
+```bash
+cd out
+rm -rf tessdata
+git clone https://github.com/tesseract-ocr/tessdata.git --branch 3.04.00
+```
+
+(If you are low on disk space, you may delete any unwanted language files from the `tessdata` folder.)
+
 
 To build docker image (for now only for linux)
 ```
