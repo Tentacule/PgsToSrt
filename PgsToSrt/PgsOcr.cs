@@ -65,7 +65,7 @@ public class PgsOcr
             return false;
         }
 
-        using (var engine = new TesseractEngine(TesseractDataPath, TesseractLanguage, EngineMode.TesseractOnly))
+        using (var engine = new TesseractEngine(TesseractDataPath, TesseractLanguage))
         {
             for (var i = 0; i < _bluraySubtitles.Count; i++)
             {
