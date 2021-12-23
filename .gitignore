@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 
 /PgsToSrt/Properties/launchSettings.json
+
+Out
