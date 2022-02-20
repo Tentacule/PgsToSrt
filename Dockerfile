@@ -21,7 +21,7 @@ COPY --from=builder /tessdata /tessdata
 COPY entrypoint.sh /entrypoint.sh
 
 RUN apt-get update && \
-    apt-get install libtesseract4 \
+    apt-get install -y libtesseract4 \
     && chmod +x /entrypoint.sh
 # Docker for Windows: EOL must be LF.
 ENTRYPOINT /entrypoint.sh
