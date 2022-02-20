@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0.101-focal-amd64 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS builder
 
 RUN apt-get update && \
     apt-get install -y automake ca-certificates g++ git libtool libtesseract4 make pkg-config libc6-dev && \
@@ -11,10 +11,16 @@ RUN cd /src && \
     mv /src/entrypoint.sh /entrypoint.sh && chmod +x /entrypoint.sh && \
     mv /src/PgsToSrt/out /app
 
+
+FROM mcr.microsoft.com/dotnet/runtime:6.0
+WORKDIR /app
 ENV LANGUAGE=eng
 ENV INPUT=/input.sup
 ENV OUTPUT=/output.srt
 VOLUME /tessdata
+
+COPY --from=builder /src/PgsToSrt/out .
+COPY entrypoint.sh /entrypoint.sh
 
 # Docker for Windows: EOL must be LF.
 ENTRYPOINT /entrypoint.sh
