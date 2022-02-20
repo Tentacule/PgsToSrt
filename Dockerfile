@@ -17,6 +17,7 @@ ENV OUTPUT=/output.srt
 VOLUME /tessdata
 
 COPY --from=builder /src/PgsToSrt/out .
+COPY --from=builder /tessdata /tessdata
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
