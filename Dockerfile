@@ -7,10 +7,7 @@ RUN apt-get update && \
 COPY . /src
 RUN cd /src && \
     dotnet restore  && \
-    dotnet publish -c Release -o /src/PgsToSrt/out && \
-    mv /src/entrypoint.sh /entrypoint.sh && chmod +x /entrypoint.sh && \
-    mv /src/PgsToSrt/out /app
-
+    dotnet publish -c Release -o /src/PgsToSrt/out
 
 FROM mcr.microsoft.com/dotnet/runtime:6.0
 WORKDIR /app
@@ -22,5 +19,6 @@ VOLUME /tessdata
 COPY --from=builder /src/PgsToSrt/out .
 COPY entrypoint.sh /entrypoint.sh
 
+RUN chmod +x /entrypoint.sh
 # Docker for Windows: EOL must be LF.
 ENTRYPOINT /entrypoint.sh
