@@ -7,7 +7,7 @@ RUN apt-get update && \
 COPY . /src
 RUN cd /src && \
     dotnet restore  && \
-    dotnet publish -c Release -o /src/PgsToSrt/out
+    dotnet publish -c Release -f net6.0 -o /src/PgsToSrt/out
 
 FROM mcr.microsoft.com/dotnet/runtime:6.0
 WORKDIR /app
@@ -23,5 +23,6 @@ COPY entrypoint.sh /entrypoint.sh
 RUN apt-get update && \
     apt-get install -y libtesseract4 \
     && chmod +x /entrypoint.sh
+    
 # Docker for Windows: EOL must be LF.
 ENTRYPOINT /entrypoint.sh
