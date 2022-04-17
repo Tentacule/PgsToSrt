@@ -29,6 +29,7 @@ dotnet PgsToSrt.dll --input video1.fr.sup --output video1.fr.srt --tesseractlang
 dotnet PgsToSrt.dll --input video1.mkv --output video1.srt --track 4
 ```
 #### Example (Docker)
+View entrypoint.sh for full list of available arguments
 ```
 docker run -it --rm -v /data:/data \
            -e INPUT=/data/myImageSubtitle.sup \
