@@ -3,7 +3,7 @@
 Convert pgs subtitles to srt using OCR.
 
 ### Prerequisites
-- [.NET 5.0 Runtime](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [.NET 6.0 Runtime](https://dotnet.microsoft.com/download/dotnet/6.0)
 - [Tesseract 4 language data files](https://github.com/tesseract-ocr/tessdata/)
 
 Data files must be placed in a _tessdata_ folder inside PgsToSrt folder, or the path can be specified in the command line with the --tesseractdata parameter.
