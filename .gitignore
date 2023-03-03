@@ -265,3 +265,4 @@ __pycache__/
 Out
 
 /tessdata
+Makefile.env
