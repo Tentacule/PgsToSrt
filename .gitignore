@@ -263,3 +263,5 @@ __pycache__/
 /PgsToSrt/Properties/launchSettings.json
 
 Out
+
+/tessdata
