@@ -1,5 +1,13 @@
 # Variables
-LANGUAGE := eng
+REPOSITORY := tentacule/pgstosrt
+LANGUAGE   := eng
+TAG_ALL    := latest
+
+# Makefile.env
+ifneq (,$(wildcard ./Makefile.env))
+	include Makefile.env
+	export
+endif
 
 ##
 ##@ General
@@ -46,12 +54,12 @@ tessdata:
 build-single: tessdata
 	docker build . \
 		--file Dockerfile \
-		--tag tzvetkoff/pgs2srt:$(LANGUAGE) \
+		--tag $(REPOSITORY):$(LANGUAGE) \
 		--build-arg LANGUAGE=$(LANGUAGE)
 
 ## Push a single-language docker image (options: LANGUAGE=eng)
 push-single:
-	docker push tzvetkoff/pgs2srt:$(LANGUAGE)
+	docker push $(REPOSITORY):$(LANGUAGE)
 
 
 ##
@@ -62,9 +70,9 @@ push-single:
 build-all: tessdata
 	docker build . \
 		--file Dockerfile \
-		--tag tzvetkoff/pgs2srt:all \
+		--tag $(REPOSITORY):$(TAG_ALL) \
 		--build-arg LANGUAGE=*
 
 ## Push all-languages docker image
 push-all:
-	docker push tzvetkoff/pgs2srt:all
+	docker push $(REPOSITORY):$(TAG_ALL)
