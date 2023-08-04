@@ -99,7 +99,7 @@ public class PgsOcr
 
         using (var bitmap = GetSubtitleBitmap(index))
         using (var image = GetPix(bitmap))
-        using (var page = engine.Process(image))
+        using (var page = engine.Process(image, PageSegMode.SingleBlock))
         {
             result = page.GetText();
             result = result?.Trim();
