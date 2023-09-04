@@ -11,12 +11,14 @@ namespace PgsToSrt
 {
     internal class Runner
     {
+        public const string DefaultTesseractVersion = "4";
+
         private readonly string[] _tesseractSupportedVersions = new[] { "4", "5" };
         private readonly ILogger _logger;
 
         private string _tesseractData;
         private string _tesseractLanguage;
-        private string _tesseractVersion = "4";
+        private string _tesseractVersion = DefaultTesseractVersion;
 
         public Runner(ILogger<Runner> logger)
         {
