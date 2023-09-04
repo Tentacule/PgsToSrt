@@ -23,6 +23,7 @@ dotnet PgsToSrt.dll [parameters]
 | `--trackLanguage`     | Convert all tracks of the specified language (only works with `.mkv` input)                                                                      |
 | `--tesseractlanguage` | Tesseract language to use if multiple languages are available in the tesseract data directory.                                                   |
 | `--tesseractdata`     | Path of tesseract language data files, by default `tessdata` in the executable directory.                                                        |
+| `--tesseractversion`  | libtesseract version, support 4 and 5 (default: 4) (ignored on Windows platform)                                                                 |
 
 ## Example (Command Line)
 

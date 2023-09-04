@@ -1,18 +1,24 @@
-﻿using CommandLine;
+using CommandLine;
 using Microsoft.Extensions.Logging;
 using PgsToSrt.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace PgsToSrt
 {
     internal class Runner
     {
+        public const string DefaultTesseractVersion = "4";
+
+        private readonly string[] _tesseractSupportedVersions = new[] { "4", "5" };
         private readonly ILogger _logger;
 
         private string _tesseractData;
         private string _tesseractLanguage;
+        private string _tesseractVersion = DefaultTesseractVersion;
 
         public Runner(ILogger<Runner> logger)
         {
@@ -43,6 +49,26 @@ namespace PgsToSrt
             var output = values.Value.Output;
             var trackLanguage = values.Value.TrackLanguage;
             var track = values.Value.Track;
+
+            // Windows uses tesseract50.dll installed by nuget package, so always use v5
+            // Other systems can uses different libtesseract versions, keep v4 as default.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (values.Value.TesseractVersion != null)
+                {
+                    _tesseractVersion = values.Value.TesseractVersion;
+
+                    if (!_tesseractSupportedVersions.Contains(_tesseractVersion))
+                    {
+                        _logger.LogError($"Unsupported Tesseract version '{_tesseractVersion}' (Supported versions: 4, 5)");
+                        result = false;
+                    }
+                }
+            }
+            else
+            {
+                _tesseractVersion = "5";
+            }
 
             _tesseractData = !string.IsNullOrEmpty(values.Value.TesseractData)
                 ? values.Value.TesseractData
@@ -107,7 +133,7 @@ namespace PgsToSrt
             if (subtitles is null)
                 return false;
 
-            var pgsOcr = new PgsOcr(_logger)
+            var pgsOcr = new PgsOcr(_logger, _tesseractVersion)
             {
                 TesseractDataPath = _tesseractData,
                 TesseractLanguage = _tesseractLanguage
@@ -116,6 +142,6 @@ namespace PgsToSrt
             pgsOcr.ToSrt(subtitles, output);
 
             return true;
-        }             
+        }
     }
 }
