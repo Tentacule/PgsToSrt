@@ -51,7 +51,12 @@ namespace PgsToSrt
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && values.Value.TesseractVersion != null)
             {
                 _tesseractVersion = values.Value.TesseractVersion;
-                result = _tesseractSupportedVersions.Contains(_tesseractVersion);
+
+                if (!_tesseractSupportedVersions.Contains(_tesseractVersion))
+                {
+                    _logger.LogError($"Unsupported Tesseract version '{_tesseractVersion}' (Supported versions: 4, 5)");
+                    result = false;
+                }
             }
 
             _tesseractData = !string.IsNullOrEmpty(values.Value.TesseractData)
