@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Nikse.SubtitleEdit.Core;
 using Nikse.SubtitleEdit.Core.BluRaySup;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
@@ -16,14 +16,17 @@ public class PgsOcr
 {
     private readonly Microsoft.Extensions.Logging.ILogger _logger;
     private readonly Subtitle _subtitle = new Subtitle();
+    private readonly string _tesseractVersion;
 
     private List<BluRaySupParser.PcsData> _bluraySubtitles;
+
     public string TesseractDataPath { get; set; }
     public string TesseractLanguage { get; set; } = "eng";
 
-    public PgsOcr(Microsoft.Extensions.Logging.ILogger logger)
+    public PgsOcr(Microsoft.Extensions.Logging.ILogger logger,  string tesseractVersion)
     {
         _logger = logger;
+        _tesseractVersion = tesseractVersion;
     }
 
     public bool ToSrt(List<BluRaySupParser.PcsData> subtitles, string outputFileName)
@@ -57,8 +60,9 @@ public class PgsOcr
     private bool DoOcr()
     {
         _logger.LogInformation($"Starting OCR for {_bluraySubtitles.Count} items...");
+        _logger.LogInformation($"Tesseract verion {_tesseractVersion}");
 
-        var exception = TesseractApi.Initialize();
+        var exception = TesseractApi.Initialize(_tesseractVersion);
         if (exception != null)
         {
             _logger.LogError(exception, $"Failed: {exception.Message}");
