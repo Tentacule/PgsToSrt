@@ -16,7 +16,7 @@ namespace PgsToSrt
 
         private string _tesseractData;
         private string _tesseractLanguage;
-        private string _tesseractVersion = "5";
+        private string _tesseractVersion = "4";
 
         public Runner(ILogger<Runner> logger)
         {
@@ -48,15 +48,24 @@ namespace PgsToSrt
             var trackLanguage = values.Value.TrackLanguage;
             var track = values.Value.Track;
 
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && values.Value.TesseractVersion != null)
+            // Windows uses tesseract50.dll installed by nuget package, so always use v5
+            // Other systems can uses different libtesseract versions, keep v4 as default.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                _tesseractVersion = values.Value.TesseractVersion;
-
-                if (!_tesseractSupportedVersions.Contains(_tesseractVersion))
+                if (values.Value.TesseractVersion != null)
                 {
-                    _logger.LogError($"Unsupported Tesseract version '{_tesseractVersion}' (Supported versions: 4, 5)");
-                    result = false;
+                    _tesseractVersion = values.Value.TesseractVersion;
+
+                    if (!_tesseractSupportedVersions.Contains(_tesseractVersion))
+                    {
+                        _logger.LogError($"Unsupported Tesseract version '{_tesseractVersion}' (Supported versions: 4, 5)");
+                        result = false;
+                    }
                 }
+            }
+            else
+            {
+                _tesseractVersion = "5";
             }
 
             _tesseractData = !string.IsNullOrEmpty(values.Value.TesseractData)
