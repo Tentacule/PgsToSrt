@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
-    <AssemblyVersion>1.4.2.0</AssemblyVersion>
-    <FileVersion>1.4.2.0</FileVersion>
-    <Version>1.4.2</Version>
+    <AssemblyVersion>1.4.3.0</AssemblyVersion>
+    <FileVersion>1.4.3.0</FileVersion>
+    <Version>1.4.3</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -14,13 +14,13 @@
   </PropertyGroup>
 
  <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
-    <PackageReference Include="libse" Version="3.5.8" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
-    <PackageReference Include="NLog" Version="4.7.5" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.6.5" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
-    <PackageReference Include="Tesseract" Version="4.1.1" />
+     <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
+     <PackageReference Include="libse" Version="3.5.8" />
+     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+     <PackageReference Include="NLog" Version="4.7.5" />
+     <PackageReference Include="NLog.Extensions.Logging" Version="1.6.5" />
+     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
+     <PackageReference Include="Tesseract" Version="5.2.0" />
     <PackageReference Include="Tncl.NativeLoader" Version="1.0.6" />
   </ItemGroup>
 

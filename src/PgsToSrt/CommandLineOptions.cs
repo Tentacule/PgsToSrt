@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 
 namespace PgsToSrt
 {
@@ -21,5 +21,9 @@ namespace PgsToSrt
 
         [Option(HelpText = "Path of tesseract language data files, by default 'tessdata' in the executable directory.")]
         public string TesseractData { get; set; }
+
+        [Option(HelpText = "Tesseract version (default: 5)", Default = "5")]
+        public string TesseractVersion { get; set; }
+
     }
 }

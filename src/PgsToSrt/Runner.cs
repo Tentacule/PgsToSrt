@@ -1,18 +1,22 @@
-﻿using CommandLine;
+using CommandLine;
 using Microsoft.Extensions.Logging;
 using PgsToSrt.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace PgsToSrt
 {
     internal class Runner
     {
+        private readonly string[] _tesseractSupportedVersions = new[] { "4", "5" };
         private readonly ILogger _logger;
 
         private string _tesseractData;
         private string _tesseractLanguage;
+        private string _tesseractVersion = "5";
 
         public Runner(ILogger<Runner> logger)
         {
@@ -43,6 +47,12 @@ namespace PgsToSrt
             var output = values.Value.Output;
             var trackLanguage = values.Value.TrackLanguage;
             var track = values.Value.Track;
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && values.Value.TesseractVersion != null)
+            {
+                _tesseractVersion = values.Value.TesseractVersion;
+                result = _tesseractSupportedVersions.Contains(_tesseractVersion);
+            }
 
             _tesseractData = !string.IsNullOrEmpty(values.Value.TesseractData)
                 ? values.Value.TesseractData
@@ -107,7 +117,7 @@ namespace PgsToSrt
             if (subtitles is null)
                 return false;
 
-            var pgsOcr = new PgsOcr(_logger)
+            var pgsOcr = new PgsOcr(_logger, _tesseractVersion)
             {
                 TesseractDataPath = _tesseractData,
                 TesseractLanguage = _tesseractLanguage
@@ -116,6 +126,6 @@ namespace PgsToSrt
             pgsOcr.ToSrt(subtitles, output);
 
             return true;
-        }             
+        }
     }
 }
