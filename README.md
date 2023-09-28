@@ -24,6 +24,8 @@ dotnet PgsToSrt.dll [parameters]
 | `--tesseractlanguage` | Tesseract language to use if multiple languages are available in the tesseract data directory.                                                   |
 | `--tesseractdata`     | Path of tesseract language data files, by default `tessdata` in the executable directory.                                                        |
 | `--tesseractversion`  | libtesseract version, support 4 and 5 (default: 4) (ignored on Windows platform)                                                                 |
+| `--libleptname`       | leptonica library name, usually lept or leptonica, 'lib' prefix is automatically added (default: lept) (ignored on Windows platform)             |
+| `--libleptversion`    | leptonica library version (default: 5) (ignored on Windows platform)                                                                             |
 
 ## Example (Command Line)
 
