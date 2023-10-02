@@ -17,16 +17,20 @@ public class PgsOcr
     private readonly Microsoft.Extensions.Logging.ILogger _logger;
     private readonly Subtitle _subtitle = new Subtitle();
     private readonly string _tesseractVersion;
+    private readonly string _libLeptName;
+    private readonly string _libLeptVersion;
 
     private List<BluRaySupParser.PcsData> _bluraySubtitles;
 
     public string TesseractDataPath { get; set; }
     public string TesseractLanguage { get; set; } = "eng";
 
-    public PgsOcr(Microsoft.Extensions.Logging.ILogger logger,  string tesseractVersion)
+    public PgsOcr(Microsoft.Extensions.Logging.ILogger logger, string tesseractVersion, string libLeptName, string libLeptVersion)
     {
         _logger = logger;
         _tesseractVersion = tesseractVersion;
+        _libLeptName = libLeptName;
+        _libLeptVersion = libLeptVersion;
     }
 
     public bool ToSrt(List<BluRaySupParser.PcsData> subtitles, string outputFileName)
@@ -62,7 +66,7 @@ public class PgsOcr
         _logger.LogInformation($"Starting OCR for {_bluraySubtitles.Count} items...");
         _logger.LogInformation($"Tesseract verion {_tesseractVersion}");
 
-        var exception = TesseractApi.Initialize(_tesseractVersion);
+        var exception = TesseractApi.Initialize(_tesseractVersion, _libLeptName, _libLeptVersion);
         if (exception != null)
         {
             _logger.LogError(exception, $"Failed: {exception.Message}");

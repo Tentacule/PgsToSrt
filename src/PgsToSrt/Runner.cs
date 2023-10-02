@@ -19,6 +19,8 @@ namespace PgsToSrt
         private string _tesseractData;
         private string _tesseractLanguage;
         private string _tesseractVersion = DefaultTesseractVersion;
+        private string _libLeptName;
+        private string _libLeptVersion;
 
         public Runner(ILogger<Runner> logger)
         {
@@ -64,6 +66,9 @@ namespace PgsToSrt
                         result = false;
                     }
                 }
+
+                _libLeptName = values.Value.LibLeptName;
+                _libLeptVersion = values.Value.LibLeptVersion;
             }
             else
             {
@@ -133,7 +138,7 @@ namespace PgsToSrt
             if (subtitles is null)
                 return false;
 
-            var pgsOcr = new PgsOcr(_logger, _tesseractVersion)
+            var pgsOcr = new PgsOcr(_logger, _tesseractVersion, _libLeptName, _libLeptVersion)
             {
                 TesseractDataPath = _tesseractData,
                 TesseractLanguage = _tesseractLanguage
