@@ -13,15 +13,21 @@ namespace PgsToSrt
     {
         private const string _assemblyName = "Assembly.Tesseract";
 
-        public static Exception Initialize(string tesseractVersion)
+        public static Exception Initialize(string tesseractVersion, string libLeptName, string libLeptVersion)
         {
             Exception exception = null;
+
+            if (string.IsNullOrEmpty(libLeptName))
+                libLeptName = "lept";
+
+            if (string.IsNullOrEmpty(libLeptVersion))
+                libLeptVersion = "5";
 
             var tessApiType = typeof(Tesseract.Page).Assembly.GetType("Tesseract.Interop.TessApi");
             var leptApiType = typeof(Tesseract.Page).Assembly.GetType("Tesseract.Interop.LeptonicaApi");
 
             var tessApiCustomType = CreateInterfaceType<ITessApiSignatures>("tesseract50", "tesseract", tesseractVersion);
-            var leptApiCustomType = CreateInterfaceType<ILeptonicaApiSignatures>("leptonica-1.82.0", "lept", "5");
+            var leptApiCustomType = CreateInterfaceType<ILeptonicaApiSignatures>("leptonica-1.82.0", libLeptName, libLeptVersion);
 
             var loader = new NativeLoader();
             loader.WindowsOptions.UseSetDllDirectory = true;
