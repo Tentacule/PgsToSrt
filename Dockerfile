@@ -13,8 +13,9 @@ RUN apt-get -y update && \
     make \
     pkg-config \
     wget \
-    libc6-dev && \
-    mkdir tessdata && \
+    libc6-dev
+
+RUN mkdir tessdata && \
     wget https://github.com/tesseract-ocr/tessdata/raw/main/${LANGUAGE}.traineddata -O ./tessdata/eng.traineddata
 
 COPY ./tessdata/${LANGUAGE}.traineddata /tessdata/
