@@ -25,7 +25,7 @@ namespace PgsToSrt
         [Option(HelpText = $"Tesseract version", Default = Runner.DefaultTesseractVersion)]
         public string TesseractVersion { get; set; }
 
-        [Option(Required = false, HelpText = "Leptonica library name.", Default = "liblept")]
+        [Option(Required = false, HelpText = "Leptonica library name.", Default = "lept")]
         public string LibLeptName { get; set; }
 
         [Option(Required = false, HelpText = "Leptonica library version.", Default = "5")]
