@@ -12,7 +12,7 @@ if [[ -n "${TRACK}" ]]; then
   args+=('--track' "${TRACK}")
 fi
 if [[ -n "${TRACK_LANGUAGE}" ]]; then
-  args+=('--trackLanguage' "${TRACK_LANGUAGE}")
+  args+=('--tracklanguage' "${TRACK_LANGUAGE}")
 fi
 if [[ -n "${LANGUAGE}" ]]; then
   args+=('--tesseractlanguage' "${LANGUAGE}")
