@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
-using Tesseract.Interop;
+using TesseractOCR.Interop;
 using Tncl.NativeLoader;
 
 namespace PgsToSrt
@@ -23,11 +23,11 @@ namespace PgsToSrt
             if (string.IsNullOrEmpty(libLeptVersion))
                 libLeptVersion = "5";
 
-            var tessApiType = typeof(Tesseract.Page).Assembly.GetType("Tesseract.Interop.TessApi");
-            var leptApiType = typeof(Tesseract.Page).Assembly.GetType("Tesseract.Interop.LeptonicaApi");
+            var tessApiType = typeof(TesseractOCR.Page).Assembly.GetType("TesseractOCR.Interop.TessApi");
+            var leptApiType = typeof(TesseractOCR.Page).Assembly.GetType("TesseractOCR.Interop.LeptonicaApi");
 
-            var tessApiCustomType = CreateInterfaceType<ITessApiSignatures>("tesseract50", "tesseract", tesseractVersion);
-            var leptApiCustomType = CreateInterfaceType<ILeptonicaApiSignatures>("leptonica-1.82.0", libLeptName, libLeptVersion);
+            var tessApiCustomType = CreateInterfaceType<ITessApiSignatures>("tesseract53", "tesseract", tesseractVersion);
+            var leptApiCustomType = CreateInterfaceType<ILeptonicaApiSignatures>("leptonica-1.83.1", libLeptName, libLeptVersion);
 
             var loader = new NativeLoader();
             loader.WindowsOptions.UseSetDllDirectory = true;
@@ -36,7 +36,7 @@ namespace PgsToSrt
             {
                 var tessApiInstance = (ITessApiSignatures)loader.CreateInstance(tessApiCustomType);
                 var leptApiInstance = (ILeptonicaApiSignatures)loader.CreateInstance(leptApiCustomType);
-
+            
                 tessApiType.GetField("native", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, tessApiInstance);
                 leptApiType.GetField("native", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, leptApiInstance);
             }
@@ -89,8 +89,8 @@ namespace PgsToSrt
         public static List<KeyValuePair<MethodInfo, string>> GetTesseractMethods(Type type)
         {
             var result = new List<KeyValuePair<MethodInfo, string>>();
-            var runtimeDllImportAttributeType = typeof(Tesseract.Page).Assembly.GetType("InteropDotNet.RuntimeDllImportAttribute");
-
+            var runtimeDllImportAttributeType = typeof(TesseractOCR.Page).Assembly.GetType("TesseractOCR.InteropDotNet.RuntimeDllImportAttribute");
+            
             foreach (var methodInfo in type.GetMethods())
             {
                 var runtimeDllImportAttribute = methodInfo.GetCustomAttribute(runtimeDllImportAttributeType);

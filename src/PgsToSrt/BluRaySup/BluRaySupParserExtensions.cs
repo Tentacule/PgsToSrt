@@ -1,4 +1,4 @@
-﻿using Nikse.SubtitleEdit.Core.BluRaySup;
+using Nikse.SubtitleEdit.Core.BluRaySup;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -52,7 +52,9 @@ namespace PgsToSrt.BluRaySup
 
             var pal = BluRaySupParser.SupDecoder.DecodePalette(palettes);
             var bm = new Image<Rgba32>(w, h);
-            bm.TryGetSinglePixelSpan(out var pixelSpan);
+
+            bm.DangerousTryGetSinglePixelMemory(out var pixelMemory);
+            var pixelSpan = pixelMemory.Span;
 
             int ofs = 0;
             int xpos = 0;

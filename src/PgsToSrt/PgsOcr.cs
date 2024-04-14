@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
-using Nikse.SubtitleEdit.Core;
 using Nikse.SubtitleEdit.Core.BluRaySup;
+using Nikse.SubtitleEdit.Core.Common;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
 using PgsToSrt;
 using PgsToSrt.BluRaySup;
@@ -10,7 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Tesseract;
+using TesseractOCR;
+using TesseractOCR.Enums;
 
 public class PgsOcr
 {
@@ -73,7 +74,7 @@ public class PgsOcr
             return false;
         }
 
-        using (var engine = new TesseractEngine(TesseractDataPath, TesseractLanguage))
+        using (var engine = new Engine(TesseractDataPath, TesseractLanguage))
         {
             for (var i = 0; i < _bluraySubtitles.Count; i++)
             {
@@ -101,32 +102,32 @@ public class PgsOcr
         return true;
     }
 
-    private string GetText(TesseractEngine engine, int index)
+    private string GetText(Engine engine, int index)
     {
         string result;
 
         using (var bitmap = GetSubtitleBitmap(index))
         using (var image = GetPix(bitmap))
-        using (var page = engine.Process(image, PageSegMode.SingleBlock))
+        using (var page = engine.Process(image, PageSegMode.Auto))
         {
-            result = page.GetText();
+            result = page.Text;
             result = result?.Trim();
         }
 
         return result;
     }
 
-    private static Pix GetPix(Image<Rgba32> bitmap)
+    private static TesseractOCR.Pix.Image GetPix(Image<Rgba32> bitmap)
     {
-        byte[] pngBytes;
+        byte[] bytes;
 
         using (var stream = new MemoryStream())
         {
             bitmap.SaveAsBmp(stream);
-            pngBytes = stream.ToArray();
+            bytes = stream.ToArray();
         }
-
-        return Pix.LoadFromMemory(pngBytes);
+       
+        return TesseractOCR.Pix.Image.LoadFromMemory(bytes);
     }
 
     private Image<Rgba32> GetSubtitleBitmap(int index)
