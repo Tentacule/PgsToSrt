@@ -69,7 +69,7 @@ To build PgsToSrt.dll execute the following commands in the `src/` directory:
 
 ``` sh
 dotnet restore
-dotnet publish -c Release -o out
+dotnet publish -c Release -o out --framework net6.0
 # The file produced is  PgsToSrt/out/PgsToSrt.dll
 ```
 
