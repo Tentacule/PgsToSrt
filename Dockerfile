@@ -15,10 +15,9 @@ RUN apt-get -y update && \
     wget \
     libc6-dev
 
-RUN mkdir tessdata && \
-    wget https://github.com/tesseract-ocr/tessdata/raw/main/${LANGUAGE}.traineddata -O ./tessdata/eng.traineddata
+ADD https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata /tessdata/
 
-COPY ./tessdata/${LANGUAGE}.traineddata /tessdata/
+COPY ./tessdata/ /tessdata/
 COPY ./src /src
 
 RUN cd /src && \
@@ -37,4 +36,4 @@ COPY --from=builder /tessdata /tessdata
 COPY ./src/entrypoint.sh /entrypoint.sh
 
 # Docker for Windows: EOL must be LF.
-ENTRYPOINT /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
