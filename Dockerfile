@@ -17,7 +17,6 @@ RUN apt-get -y update && \
 
 ADD https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata /tessdata/
 
-COPY ./tessdata/ /tessdata/
 COPY ./src /src
 
 RUN cd /src && \
