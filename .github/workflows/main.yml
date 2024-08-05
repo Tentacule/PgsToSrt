@@ -47,5 +47,3 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/pgstosrt:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/pgstosrt:${{ github.ref_name }}
-            # ghcr.io/${{ env.OWNER_LC }}/pgstosrt:latest
-            # ghcr.io/${{ env.OWNER_LC }}/pgstosrt:${{ github.ref_name }}            
