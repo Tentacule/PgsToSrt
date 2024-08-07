@@ -28,6 +28,13 @@ WORKDIR /app
 ENV LANGUAGE=eng
 ENV INPUT=/input.sup
 ENV OUTPUT=/output.srt
+
+RUN apt-get update && \
+    apt-get install -y \
+        libtesseract4 \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
 VOLUME /tessdata
 
 COPY --from=builder /src/PgsToSrt/out .
