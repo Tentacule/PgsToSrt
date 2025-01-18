@@ -1,39 +1,37 @@
-using Nikse.SubtitleEdit.Core.BluRaySup;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
-using static Nikse.SubtitleEdit.Core.BluRaySup.BluRaySupParser;
+using Nikse.SubtitleEdit.Core.BluRaySup;
 
 namespace PgsToSrt.BluRaySup
 {
     public static class BluRaySupParserExtensions
     {
-        public static Image<Rgba32> GetRgba32(this PcsData pcsData)
+        public static Image<Rgba32> GetRgba32(this BluRaySupParserImageSharp.PcsData pcsData)
         {
             if (pcsData.PcsObjects.Count == 1)
                 return SupDecoder.DecodeImage(pcsData.PcsObjects[0], pcsData.BitmapObjects[0], pcsData.PaletteInfos);
 
-            var r = System.Drawing.Rectangle.Empty;
+            var r = Rectangle.Empty;
             for (var ioIndex = 0; ioIndex < pcsData.PcsObjects.Count; ioIndex++)
             {
-                var ioRect = new System.Drawing.Rectangle(pcsData.PcsObjects[ioIndex].Origin, pcsData.BitmapObjects[ioIndex][0].Size);
-                r = r.IsEmpty ? ioRect : System.Drawing.Rectangle.Union(r, ioRect);
+                var ioRect = new Rectangle(pcsData.PcsObjects[ioIndex].Origin, pcsData.BitmapObjects[ioIndex][0].Size);
+                r = r.IsEmpty ? ioRect : Rectangle.Union(r, ioRect);
             }
 
             var mergedBmp = new Image<Rgba32>(r.Width, r.Height);
             for (var ioIndex = 0; ioIndex < pcsData.PcsObjects.Count; ioIndex++)
             {
-                var offset = pcsData.PcsObjects[ioIndex].Origin - new System.Drawing.Size(r.Location);
-                using (var singleBmp = SupDecoder.DecodeImage(pcsData.PcsObjects[ioIndex], pcsData.BitmapObjects[ioIndex], pcsData.PaletteInfos))
-                {
-                    mergedBmp.Mutate(b => b.DrawImage(singleBmp, new SixLabors.ImageSharp.Point(offset.X, offset.Y), 0));
-                }
+                var offset = pcsData.PcsObjects[ioIndex].Origin - new Size(r.Location);
+                using var singleBmp = SupDecoder.DecodeImage(pcsData.PcsObjects[ioIndex], pcsData.BitmapObjects[ioIndex], pcsData.PaletteInfos);
+
+                mergedBmp.Mutate(b => b.DrawImage(singleBmp, new Point(offset.X, offset.Y), 0));
             }
+
             return mergedBmp;
         }
-
     }
 
     static class SupDecoder
@@ -42,98 +40,100 @@ namespace PgsToSrt.BluRaySup
         /// Decode caption from the input stream
         /// </summary>
         /// <returns>bitmap of the decoded caption</returns>
-        public static Image<Rgba32> DecodeImage(PcsObject pcs, IList<OdsData> data, List<PaletteInfo> palettes)
+        public static Image<Rgba32> DecodeImage(
+            BluRaySupParserImageSharp.PcsObject pcs,
+            IList<BluRaySupParserImageSharp.OdsData> data,
+            List<BluRaySupParserImageSharp.PaletteInfo> palettes)
         {
             if (pcs == null || data == null || data.Count == 0)
                 return new Image<Rgba32>(1, 1);
+            var width = data[0].Size.Width;
+            var height = data[0].Size.Height;
+            if (width <= 0 || height <= 0 || data[0].Fragment.ImageBuffer.Length == 0)
+                return new Image<Rgba32>(1, 1);
 
-            int w = data[0].Size.Width;
-            int h = data[0].Size.Height;
+            var bmp = new Image<Rgba32>(width, height);
 
-            var pal = BluRaySupParser.SupDecoder.DecodePalette(palettes);
-            var bm = new Image<Rgba32>(w, h);
-
-            bm.DangerousTryGetSinglePixelMemory(out var pixelMemory);
+            bmp.DangerousTryGetSinglePixelMemory(out var pixelMemory);
             var pixelSpan = pixelMemory.Span;
 
-            int ofs = 0;
-            int xpos = 0;
-            var index = 0;
-
-            byte[] buf = data[0].Fragment.ImageBuffer;
+            var palette = BluRaySupParserImageSharp.DecodePalette(palettes);
+            int num1 = 0;
+            int num2 = 0;
+            int num3 = 0;
+            byte[] imageBuffer = data[0].Fragment.ImageBuffer;
             do
             {
-                int b = buf[index++] & 0xff;
-                if (b == 0 && index < buf.Length)
+                var color1 = imageBuffer[num3++] & byte.MaxValue;
+                if (color1 == 0 && num3 < imageBuffer.Length)
                 {
-                    b = buf[index++] & 0xff;
-                    if (b == 0)
+                    int num4 = imageBuffer[num3++] & byte.MaxValue;
+                    if (num4 == 0)
                     {
-                        // next line
-                        ofs = (ofs / w) * w;
-                        if (xpos < w)
-                            ofs += w;
-                        xpos = 0;
+                        num1 = num1 / width * width;
+                        if (num2 < width)
+                            num1 += width;
+                        num2 = 0;
+                    }
+                    else if ((num4 & 192) == 64)
+                    {
+                        if (num3 < imageBuffer.Length)
+                        {
+                            int num5 = (num4 - 64 << 8) + ((int) imageBuffer[num3++] & (int) byte.MaxValue);
+                            Color color2 = GetColorFromInt(palette.GetArgb(0));
+                            for (int index = 0; index < num5; ++index)
+                                PutPixel(pixelSpan, num1++, color2);
+                            num2 += num5;
+                        }
+                    }
+                    else if ((num4 & 192) == 128)
+                    {
+                        if (num3 < imageBuffer.Length)
+                        {
+                            int num6 = num4 - 128;
+                            int index1 = imageBuffer[num3++] & byte.MaxValue;
+                            Color color3 = GetColorFromInt(palette.GetArgb(index1));
+                            for (int index2 = 0; index2 < num6; ++index2)
+                                PutPixel(pixelSpan, num1++, color3);
+                            num2 += num6;
+                        }
+                    }
+                    else if ((num4 & 192) != 0)
+                    {
+                        if (num3 < imageBuffer.Length)
+                        {
+                            int num7 = num4 - 192 << 8;
+                            byte[] numArray1 = imageBuffer;
+                            int index3 = num3;
+                            int num8 = index3 + 1;
+                            int num9 = numArray1[index3] & byte.MaxValue;
+                            int num10 = num7 + num9;
+                            byte[] numArray2 = imageBuffer;
+                            int index4 = num8;
+                            num3 = index4 + 1;
+                            int index5 = (int) numArray2[index4] & byte.MaxValue;
+                            Color color4 = GetColorFromInt(palette.GetArgb(index5));
+                            for (int index6 = 0; index6 < num10; ++index6)
+                                PutPixel(pixelSpan, num1++, color4);
+                            num2 += num10;
+                        }
                     }
                     else
                     {
-                        int size;
-                        if ((b & 0xC0) == 0x40)
-                        {
-                            if (index < buf.Length)
-                            {
-                                // 00 4x xx -> xxx zeroes
-                                size = ((b - 0x40) << 8) + (buf[index++] & 0xff);
-                                var c = GetColorFromInt(pal.GetArgb(0));
-                                for (int i = 0; i < size; i++)
-                                    PutPixel(pixelSpan, ofs++, c);
-                                xpos += size;
-                            }
-                        }
-                        else if ((b & 0xC0) == 0x80)
-                        {
-                            if (index < buf.Length)
-                            {
-                                // 00 8x yy -> x times value y
-                                size = (b - 0x80);
-                                b = buf[index++] & 0xff;
-                                var c = GetColorFromInt(pal.GetArgb(b));
-                                for (int i = 0; i < size; i++)
-                                    PutPixel(pixelSpan, ofs++, c);
-                                xpos += size;
-                            }
-                        }
-                        else if ((b & 0xC0) != 0)
-                        {
-                            if (index < buf.Length)
-                            {
-                                // 00 cx yy zz -> xyy times value z
-                                size = ((b - 0xC0) << 8) + (buf[index++] & 0xff);
-                                b = buf[index++] & 0xff;
-                                var c = GetColorFromInt(pal.GetArgb(b));
-                                for (int i = 0; i < size; i++)
-                                    PutPixel(pixelSpan, ofs++, c);
-                                xpos += size;
-                            }
-                        }
-                        else
-                        {
-                            // 00 xx -> xx times 0
-                            var c = GetColorFromInt(pal.GetArgb(0));
-                            for (int i = 0; i < b; i++)
-                                PutPixel(pixelSpan, ofs++, c);
-                            xpos += b;
-                        }
+                        Color color5 = GetColorFromInt(palette.GetArgb(0));
+                        for (int index = 0; index < num4; ++index)
+                            PutPixel(pixelSpan, num1++, color5);
+                        num2 += num4;
                     }
                 }
                 else
                 {
-                    PutPixel(pixelSpan, ofs++, b, pal);
-                    xpos++;
+                    PutPixel(pixelSpan, num1++, color1, palette);
+                    ++num2;
                 }
-            } while (index < buf.Length);
+            } while (num3 < imageBuffer.Length);
 
-            return bm;
+            return bmp;
         }
 
         private static void PutPixel(Span<Rgba32> bmp, int index, int color, BluRaySupPalette palette)

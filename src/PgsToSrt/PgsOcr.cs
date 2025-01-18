@@ -1,17 +1,17 @@
-using Microsoft.Extensions.Logging;
-using Nikse.SubtitleEdit.Core.BluRaySup;
-using Nikse.SubtitleEdit.Core.Common;
-using Nikse.SubtitleEdit.Core.SubtitleFormats;
-using PgsToSrt;
-using PgsToSrt.BluRaySup;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Microsoft.Extensions.Logging;
+using Nikse.SubtitleEdit.Core.Common;
+using Nikse.SubtitleEdit.Core.SubtitleFormats;
+using PgsToSrt.BluRaySup;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using TesseractOCR;
 using TesseractOCR.Enums;
+
+namespace PgsToSrt;
 
 public class PgsOcr
 {
@@ -21,7 +21,7 @@ public class PgsOcr
     private readonly string _libLeptName;
     private readonly string _libLeptVersion;
 
-    private List<BluRaySupParser.PcsData> _bluraySubtitles;
+    private List<BluRaySupParserImageSharp.PcsData> _bluraySubtitles;
 
     public string TesseractDataPath { get; set; }
     public string TesseractLanguage { get; set; } = "eng";
@@ -34,7 +34,7 @@ public class PgsOcr
         _libLeptVersion = libLeptVersion;
     }
 
-    public bool ToSrt(List<BluRaySupParser.PcsData> subtitles, string outputFileName)
+    public bool ToSrt(List<BluRaySupParserImageSharp.PcsData> subtitles, string outputFileName)
     {
         _bluraySubtitles = subtitles;
 
@@ -104,15 +104,11 @@ public class PgsOcr
 
     private string GetText(Engine engine, int index)
     {
-        string result;
-
-        using (var bitmap = GetSubtitleBitmap(index))
-        using (var image = GetPix(bitmap))
-        using (var page = engine.Process(image, PageSegMode.Auto))
-        {
-            result = page.Text;
-            result = result?.Trim();
-        }
+        using var bitmap = GetSubtitleBitmap(index);
+        using var image = GetPix(bitmap);
+        using var page = engine.Process(image, PageSegMode.Auto);
+        
+        var result = page.Text?.Trim();
 
         return result;
     }
