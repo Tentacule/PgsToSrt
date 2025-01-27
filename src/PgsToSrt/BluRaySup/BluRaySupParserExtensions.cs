@@ -52,7 +52,7 @@ namespace PgsToSrt.BluRaySup
             if (width <= 0 || height <= 0 || data[0].Fragment.ImageBuffer.Length == 0)
                 return new Image<Rgba32>(1, 1);
 
-            var bmp = new Image<Rgba32>(width, height);
+            using var bmp = new Image<Rgba32>(width, height);
 
             bmp.DangerousTryGetSinglePixelMemory(out var pixelMemory);
             var pixelSpan = pixelMemory.Span;
@@ -133,7 +133,11 @@ namespace PgsToSrt.BluRaySup
                 }
             } while (num3 < imageBuffer.Length);
 
-            return bmp;
+            var bmp2 = new Image<Rgba32>(width + 50, height + 50);
+            // ReSharper disable once AccessToDisposedClosure
+            bmp2.Mutate(i => i.DrawImage(bmp, new Point(25, 25), 1f));
+
+            return bmp2;
         }
 
         private static void PutPixel(Span<Rgba32> bmp, int index, int color, BluRaySupPalette palette)
