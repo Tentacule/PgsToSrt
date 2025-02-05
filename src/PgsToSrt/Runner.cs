@@ -13,7 +13,7 @@ namespace PgsToSrt
     {
         public const string DefaultTesseractVersion = "4";
 
-        private readonly string[] _tesseractSupportedVersions = new[] { "4", "5" };
+        private readonly string[] _tesseractSupportedVersions = new[] {"4", "5"};
         private readonly ILogger _logger;
 
         private string _tesseractData;
@@ -97,18 +97,19 @@ namespace PgsToSrt
                     var runnerOptionLanguages = MkvUtilities.GetTracksByLanguage(input, trackLanguage, output);
                     foreach (var item in runnerOptionLanguages)
                     {
-                        trackOptions.Add(new TrackOption() { Input = input, Output = item.Output, Track = item.Track });
+                        trackOptions.Add(new TrackOption() {Input = input, Output = item.Output, Track = item.Track});
                     }
                 }
                 else
                 {
-                    trackOptions.Add(new TrackOption() { Input = input, Output = output, Track = track });
+                    trackOptions.Add(new TrackOption() {Input = input, Output = output, Track = track});
                 }
             }
             else
             {
-                var outputFilename = MkvUtilities.GetBaseDefaultOutputFilename(input, output) + ".srt";
-                trackOptions.Add(new TrackOption() { Input = input, Output = outputFilename, Track = null });
+                var outputFilename = !string.IsNullOrEmpty(output) ? output : MkvUtilities.GetBaseDefaultOutputFilename(input, output) + ".srt";
+
+                trackOptions.Add(new TrackOption() {Input = input, Output = outputFilename, Track = null});
             }
 
             if (Directory.Exists(_tesseractData))

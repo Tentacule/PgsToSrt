@@ -23,5 +23,7 @@ else
   args+=('--tesseractdata' '/tessdata')
 fi
 
+args+=('--tesseractversion' '5')
+  
 echo "dotnet /app/PgsToSrt.dll ${args[*]}"
 dotnet /app/PgsToSrt.dll "${args[@]}"

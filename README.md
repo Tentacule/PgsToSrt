@@ -4,7 +4,7 @@ Convert [PGS](https://en.wikipedia.org/wiki/Presentation_Graphic_Stream) subtitl
 
 ## Prerequisites
 
-- [.NET 6.0 Runtime](https://dotnet.microsoft.com/download/dotnet/6.0)
+- [.NET 8.0 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Tesseract 4 language data files](https://github.com/tesseract-ocr/tessdata/)
 
 Data files must be placed in the `tessdata` folder inside PgsToSrt folder, or the path can be specified in the command line with the --tesseractdata parameter.
@@ -16,11 +16,11 @@ You only need data files for the language(s) you want to convert.
 dotnet PgsToSrt.dll [parameters]
 
 | Parameter             | Description                                                                                                                                      |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| --------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------|
 | `--input`             | Input filename, can be an mkv file or pgs subtitle extracted to a .sup file with mkvextract.                                                     |
 | `--output`            | Output SubRip (`.srt`) filename. Auto generated from input filename if not set.                                                                  |
 | `--track`             | Track number of the subtitle to process in an `.mkv` file (only required when input is a matroska file) <br/>This can be obtained with `mkvinfo` |
-| `--tracklanguage`     | Convert all tracks of the specified language (only works with `.mkv` input)                                                                      |
+| `--tracklanguage`     | Convert all tracks of the specified language (only works with `.mkv` input)                                                               |
 | `--tesseractlanguage` | Tesseract language to use if multiple languages are available in the tesseract data directory.                                                   |
 | `--tesseractdata`     | Path of tesseract language data files, by default `tessdata` in the executable directory.                                                        |
 | `--tesseractversion`  | libtesseract version, support 4 and 5 (default: 4) (ignored on Windows platform)                                                                 |
@@ -61,7 +61,7 @@ docker run --it -rm \
 ## Dependencies
 
 - Windows : none, tesseract/leptonica libraries are included in the release package.
-- Linux   : libtesseract4 (`sudo apt install libtesseract4` or whatever your distro requires)
+- Linux   : libtesseract5 (`sudo apt install libtesseract5` or whatever your distro requires)
 
 ## Build
 
