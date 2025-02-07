@@ -39,7 +39,7 @@ dotnet PgsToSrt.dll --input video1.mkv --output video1.srt --track 4
 Examime `entrypoint.sh` for a full list of all available arguments.
 
 ``` sh
-docker run -it --rm \
+docker run --it -rm \
     -v /data:/data \
     -e INPUT=/data/myImageSubtitle.sup \
     -e OUTPUT=/data/myTextSubtitle.srt \
@@ -51,9 +51,9 @@ Hint: The default arguments coming from `Dockerfile` are `INPUT=/input.sup` and 
 
 ``` sh
 touch output-file.srt  # This needs to be a file, otherwise Docker will just assume it's a directory mount and it will fail.
-docker run --it -rm \
+docker run -it --rm \
     -v source-file.sup:/input.sup \
-    -v output-file.srt:/output.srt \
+    -v output-file.srt:/input.srt \
     -e LANGUAGE=eng \
     tentacule/pgstosrt
 ```
