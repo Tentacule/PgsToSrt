@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nikse.SubtitleEdit.Core.Common;
 using Nikse.SubtitleEdit.Core.SubtitleFormats;
@@ -16,11 +19,10 @@ namespace PgsToSrt;
 public class PgsOcr
 {
     private readonly Microsoft.Extensions.Logging.ILogger _logger;
-    private readonly Subtitle _subtitle = new Subtitle();
+    private readonly Subtitle _subtitle = new ();
     private readonly string _tesseractVersion;
     private readonly string _libLeptName;
     private readonly string _libLeptVersion;
-
     private List<BluRaySupParserImageSharp.PcsData> _bluraySubtitles;
 
     public string TesseractDataPath { get; set; }
@@ -38,7 +40,7 @@ public class PgsOcr
     {
         _bluraySubtitles = subtitles;
 
-        if (!DoOcr())
+        if (!DoOcrParallel())
             return false;
 
         try
@@ -56,16 +58,14 @@ public class PgsOcr
 
     private void Save(string outputFileName)
     {
-        using (var file = new StreamWriter(outputFileName, false, new UTF8Encoding(false)))
-        {
-            file.Write(_subtitle.ToText(new SubRip()));
-        }
+        using var file = new StreamWriter(outputFileName, false, new UTF8Encoding(false));
+        file.Write(_subtitle.ToText(new SubRip()));
     }
 
-    private bool DoOcr()
+    private bool DoOcrParallel()
     {
         _logger.LogInformation($"Starting OCR for {_bluraySubtitles.Count} items...");
-        _logger.LogInformation($"Tesseract verion {_tesseractVersion}");
+        _logger.LogInformation($"Tesseract version {_tesseractVersion}");
 
         var exception = TesseractApi.Initialize(_tesseractVersion, _libLeptName, _libLeptVersion);
         if (exception != null)
@@ -74,10 +74,15 @@ public class PgsOcr
             return false;
         }
 
-        using (var engine = new Engine(TesseractDataPath, TesseractLanguage))
+        var ocrResults = new ConcurrentBag<Paragraph>();
+
+        // Process subtitles in parallel
+        Parallel.ForEach(Enumerable.Range(0, _bluraySubtitles.Count), i =>
         {
-            for (var i = 0; i < _bluraySubtitles.Count; i++)
+            try
             {
+                using var engine = new Engine(TesseractDataPath, TesseractLanguage);
+
                 var item = _bluraySubtitles[i];
 
                 var paragraph = new Paragraph
@@ -88,17 +93,23 @@ public class PgsOcr
                     Text = GetText(engine, i)
                 };
 
-                _subtitle.Paragraphs.Add(paragraph);
+                ocrResults.Add(paragraph);
 
                 if (i % 50 == 0)
                 {
                     _logger.LogInformation($"Processed item {paragraph.Number}.");
                 }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error processing item {i}: {ex.Message}");
+            }
+        });
 
-            _logger.LogInformation("Finished OCR.");
-        }
+        // Sort the results and add them to the subtitle
+        _subtitle.Paragraphs.AddRange(ocrResults.OrderBy(p => p.Number));
 
+        _logger.LogInformation("Finished OCR.");
         return true;
     }
 
@@ -107,22 +118,18 @@ public class PgsOcr
         using var bitmap = GetSubtitleBitmap(index);
         using var image = GetPix(bitmap);
         using var page = engine.Process(image, PageSegMode.Auto);
-        
-        var result = page.Text?.Trim();
 
-        return result;
+        return page.Text?.Trim();
     }
 
     private static TesseractOCR.Pix.Image GetPix(Image<Rgba32> bitmap)
     {
         byte[] bytes;
-
         using (var stream = new MemoryStream())
         {
             bitmap.SaveAsBmp(stream);
             bytes = stream.ToArray();
         }
-       
         return TesseractOCR.Pix.Image.LoadFromMemory(bytes);
     }
 
@@ -130,5 +137,4 @@ public class PgsOcr
     {
         return _bluraySubtitles[index].GetRgba32();
     }
-
 }
