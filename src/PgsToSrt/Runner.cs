@@ -13,7 +13,7 @@ namespace PgsToSrt
     {
         public const string DefaultTesseractVersion = "4";
 
-        private readonly string[] _tesseractSupportedVersions = new[] {"4", "5"};
+        private readonly string[] _tesseractSupportedVersions = ["4", "5"];
         private readonly ILogger _logger;
 
         private string _tesseractData;
@@ -95,10 +95,7 @@ namespace PgsToSrt
                 else if (!string.IsNullOrEmpty(trackLanguage))
                 {
                     var runnerOptionLanguages = MkvUtilities.GetTracksByLanguage(input, trackLanguage, output);
-                    foreach (var item in runnerOptionLanguages)
-                    {
-                        trackOptions.Add(new TrackOption() {Input = input, Output = item.Output, Track = item.Track});
-                    }
+                    trackOptions.AddRange(runnerOptionLanguages.Select(item => new TrackOption() { Input = input, Output = item.Output, Track = item.Track }));
                 }
                 else
                 {
@@ -128,13 +125,13 @@ namespace PgsToSrt
                 result = false;
             }
 
-            return (result, trackOptions: trackOptions);
+            return (result, trackOptions);
         }
 
         private bool ConvertPgs(string input, int? track, string output)
         {
             var pgsParser = new PgsParser(_logger);
-            var subtitles = pgsParser.Load(input, track.GetValueOrDefault(), output);
+            var subtitles = pgsParser.Load(input, track.GetValueOrDefault());
 
             if (subtitles is null)
                 return false;
