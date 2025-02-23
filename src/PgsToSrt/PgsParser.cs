@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,60 +18,43 @@ namespace PgsToSrt
             _logger = logger;
         }
 
-        public List<BluRaySupParserImageSharp.PcsData> Load(string filename, int track, string output)
-        {
-            List<BluRaySupParserImageSharp.PcsData> pcsDataList = null;
-
-            if (Path.GetExtension(filename.ToLowerInvariant()) == ".sup")
-                pcsDataList = LoadSup(filename, output);
-            else if (MkvUtilities.IsMkvFile(filename))
-                pcsDataList = LoadMkv(filename, track, output);
-
-            return pcsDataList;
-        }
-
-        private static List<BluRaySupParserImageSharp.PcsData> LoadSup(string filename, string output)
-        {
-            return LoadSubtitles(filename);
-        }
-
-        private List<BluRaySupParserImageSharp.PcsData> LoadMkv(string filename, int trackNumber, string output)
-        {
-            List<BluRaySupParserImageSharp.PcsData> result = null;
-
-            using (var matroska = new MatroskaFile(filename))
+        public List<BluRaySupParserImageSharp.PcsData> Load(string filename, int track) =>
+            Path.GetExtension(filename.ToLowerInvariant()) switch
             {
-                if (matroska.IsValid)
-                {
-                    var pgsTracks = MkvUtilities.GetPgsSubtitleTracks(matroska);
-                    var track = (from t in pgsTracks where t.TrackNumber == trackNumber select t).FirstOrDefault();
+                ".sup" => LoadSubtitles(filename),
+                _ when MkvUtilities.IsMkvFile(filename) => LoadMkv(filename, track),
+                _ => throw new InvalidOperationException(
+                        $"Unsupported file type: {Path.GetExtension(filename.ToLowerInvariant())}")
+            };
 
-                    if (track != null)
-                    {
-                        result = LoadSubtitles(matroska, track);
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"Track {trackNumber} is not a PGS track.");
-                        ShowPgsTracks(filename, pgsTracks);
-                    }
-                }
-                else
-                {
-                    _logger.LogInformation($"Invalid matroska file '{filename}'");
-                }
+        private List<BluRaySupParserImageSharp.PcsData> LoadMkv(string filename, int trackNumber)
+        {
+            using var matroska = new MatroskaFile(filename);
+            if (!matroska.IsValid)
+            {
+                _logger.LogInformation($"Invalid Matroska file '{filename}'");
+                return null;
             }
 
-            return result;
+            var pgsTracks = MkvUtilities.GetPgsSubtitleTracks(matroska);
+            var track = pgsTracks.FirstOrDefault(t => t.TrackNumber == trackNumber);
+
+            if (track != null)
+            {
+                return LoadSubtitles(matroska, track);
+            }
+
+            _logger.LogInformation($"Track {trackNumber} is not a PGS track.");
+            LogPgsTracks(filename, pgsTracks);
+            return null;
         }
 
-        private void ShowPgsTracks(string filename, IReadOnlyCollection<MatroskaTrackInfo> pgsTracks)
+        private void LogPgsTracks(string filename, List<MatroskaTrackInfo> pgsTracks)
         {
             _logger.LogInformation($"-> {pgsTracks.Count} PGS tracks found in '{filename}'");
             foreach (var track in pgsTracks)
             {
-                _logger.LogInformation(
-                    $"- {track.TrackNumber.ToString().PadRight(2)} {track.Language.PadLeft(3)} {track.Name}");
+                _logger.LogInformation($"- {track.TrackNumber,-2} {track.Language,3} {track.Name}");
             }
         }
 
@@ -82,14 +66,9 @@ namespace PgsToSrt
 
         private static List<BluRaySupParserImageSharp.PcsData> LoadSubtitles(MatroskaFile matroska, MatroskaTrackInfo track)
         {
-            List<BluRaySupParserImageSharp.PcsData> result = null;
-
-            if (matroska.IsValid)
-            {
-                result = BluRaySupParserImageSharp.ParseBluRaySupFromMatroska(track, matroska);
-            }
-
-            return result;
+            return matroska.IsValid
+                ? BluRaySupParserImageSharp.ParseBluRaySupFromMatroska(track, matroska)
+                : null;
         }
     }
 }
