@@ -54,7 +54,7 @@ namespace PgsToSrt
             _logger.LogInformation($"-> {pgsTracks.Count} PGS tracks found in '{filename}'");
             foreach (var track in pgsTracks)
             {
-                _logger.LogInformation($"- {track.TrackNumber,-2} {track.Language,3} {track.Name}");
+                _logger.LogInformation($"- {(track.TrackNumber - 1),-2} {track.Language,3} {track.Name}");
             }
         }
 
