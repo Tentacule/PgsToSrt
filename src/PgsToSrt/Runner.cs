@@ -52,6 +52,9 @@ namespace PgsToSrt
             var trackLanguage = values.Value.TrackLanguage;
             var track = values.Value.Track;
 
+            if (track != null)
+                track++; // Matroska parser used here start to count tracks at 1 instead of 0 in other tools (mkvmerge, ffmpeg)
+
             // Windows uses tesseract50.dll installed by nuget package, so always use v5
             // Other systems can uses different libtesseract versions, keep v4 as default.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -95,6 +98,21 @@ namespace PgsToSrt
                 else if (!string.IsNullOrEmpty(trackLanguage))
                 {
                     var runnerOptionLanguages = MkvUtilities.GetTracksByLanguage(input, trackLanguage, output);
+                    
+                    if (!string.IsNullOrEmpty(output)) 
+                    {
+                        // an output name is set, if there is only one track found, we can use it.
+                        if (runnerOptionLanguages.Count == 1)
+                        {
+                            runnerOptionLanguages.First().Output = output;
+                        }
+                        else
+                        {
+                            result = false;
+                            _logger.LogError($"Multiple tracks found with language '{trackLanguage}', --output argument cannot be used.");
+                        }
+                    }
+                    
                     trackOptions.AddRange(runnerOptionLanguages.Select(item => new TrackOption() { Input = input, Output = item.Output, Track = item.Track }));
                 }
                 else
