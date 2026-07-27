@@ -91,3 +91,7 @@ make build-single LANGUAGE=eng  # or any other Tessaract-available language code
 - [Tesseract .net wrapper](https://github.com/charlesw/tesseract/)
 - [CommandLineParser](https://github.com/commandlineparser/commandline)
 - [SixLabors ImageSharp](https://github.com/SixLabors/ImageSharp)
+
+## License
+
+This project is licensed under the [GNU Affero General Public License v3.0](LICENSE).
