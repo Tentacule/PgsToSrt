@@ -1,7 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 
-ARG LANGUAGE=eng
-
 RUN apt-get -y update && \
   apt-get -y upgrade && \
   apt-get -y install \
@@ -12,10 +10,7 @@ RUN apt-get -y update && \
     libtesseract5 \
     make \
     pkg-config \
-    wget \
     libc6-dev
-
-ADD https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata /tessdata/
 
 COPY ./src /src
 
@@ -24,6 +19,7 @@ RUN cd /src && \
     dotnet publish -c Release -f net8.0 -o /src/PgsToSrt/out
 
 FROM mcr.microsoft.com/dotnet/runtime:8.0
+ARG TESSDATA_DIR=tessdata
 WORKDIR /app
 ENV LANGUAGE=eng
 ENV INPUT=/input.sup
@@ -34,11 +30,11 @@ RUN apt-get update && \
         libtesseract5 \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-    
+
 VOLUME /tessdata
 
 COPY --from=builder /src/PgsToSrt/out .
-COPY --from=builder /tessdata /tessdata
+COPY ${TESSDATA_DIR} /tessdata
 COPY ./src/entrypoint.sh /entrypoint.sh
 
 # Docker for Windows: EOL must be LF.

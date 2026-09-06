@@ -38,6 +38,8 @@ dotnet PgsToSrt.dll --input video1.mkv --output video1.srt --track 4
 
 Examime `entrypoint.sh` for a full list of all available arguments.
 
+The docker image bakes in whichever tessdata was present in `TESSDATA_DIR` at build time (see [Build](#build)). You only need `-v` to override it with a different `/tessdata` at runtime.
+
 ``` sh
 docker run -it --rm \
     -v /data:/data \
@@ -73,16 +75,24 @@ dotnet publish -c Release -o out --framework net6.0
 # The file produced is  PgsToSrt/out/PgsToSrt.dll
 ```
 
-To build a Docker image for all languages:
+Download the tessdata for each language you want to bake into the image (repeat with a different `LANGUAGE` to add more):
 
 ``` sh
-make build-all
+make tessdata LANGUAGE=eng
+make tessdata LANGUAGE=fra
 ```
 
-To build a docker image for a single language:
+Then build the Docker image, which copies the content of `TESSDATA_DIR` (default: `tessdata`) into `/tessdata` inside the image:
 
 ``` sh
-make build-single LANGUAGE=eng  # or any other Tessaract-available language code
+make build
+```
+
+`TESSDATA_DIR` can be overridden on both commands (e.g. to reuse an existing tessdata folder, or to keep multiple sets of languages side by side):
+
+``` sh
+make tessdata TESSDATA_DIR=some/dir LANGUAGE=fra
+make build TESSDATA_DIR=some/dir
 ```
 
 ## Built With
