@@ -1,5 +1,6 @@
 # Variables
 REPOSITORY := tentacule/pgstosrt
+TESSDATA_DIR  := tessdata
 LANGUAGE   := eng
 TAG_ALL    := latest
 
@@ -42,37 +43,25 @@ help:
 ##
 
 ## Download tesseract-ocr data files
+.PHONY: tessdata
 tessdata:
-	git clone --depth=1 https://github.com/tesseract-ocr/tessdata.git
+	mkdir -p $(TESSDATA_DIR)
+	test -f $(TESSDATA_DIR)/$(LANGUAGE).traineddata || \
+		curl -fL https://github.com/tesseract-ocr/tessdata/raw/main/$(LANGUAGE).traineddata \
+			-o $(TESSDATA_DIR)/$(LANGUAGE).traineddata
 
 
 ##
-##@ Single language
+##@ Image
 ##
 
-## Build a single-language docker image (options: LANGUAGE=eng)
-build-single: tessdata
-	docker build . \
-		--file Dockerfile \
-		--tag $(REPOSITORY):$(LANGUAGE) \
-		--build-arg LANGUAGE=$(LANGUAGE)
-
-## Push a single-language docker image (options: LANGUAGE=eng)
-push-single:
-	docker push $(REPOSITORY):$(LANGUAGE)
-
-
-##
-##@ Multi language
-##
-
-## Build all-languages docker image (default language is `eng`)
-build-all: tessdata
+## Build the docker image, baking in the tessdata found in TESSDATA_DIR (options: TESSDATA_DIR=tessdata)
+build:
 	docker build . \
 		--file Dockerfile \
 		--tag $(REPOSITORY):$(TAG_ALL) \
-		--build-arg LANGUAGE=*
+		--build-arg TESSDATA_DIR=$(TESSDATA_DIR)
 
-## Push all-languages docker image
-push-all:
+## Push the docker image
+push:
 	docker push $(REPOSITORY):$(TAG_ALL)
