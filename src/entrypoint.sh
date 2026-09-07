@@ -1,5 +1,14 @@
 #!/bin/bash
 
+TESSDATA_DIR="${TESSDATA:-/tessdata}"
+
+if [[ -n "${LANGUAGE}" ]]; then
+  mkdir -p "${TESSDATA_DIR}"
+  test -f "${TESSDATA_DIR}/${LANGUAGE}.traineddata" || \
+    curl -fL "https://github.com/tesseract-ocr/tessdata/raw/main/${LANGUAGE}.traineddata" \
+      -o "${TESSDATA_DIR}/${LANGUAGE}.traineddata"
+fi
+
 args=()
 
 if [[ -n "${INPUT}" ]]; then
@@ -17,11 +26,7 @@ fi
 if [[ -n "${LANGUAGE}" ]]; then
   args+=('--tesseractlanguage' "${LANGUAGE}")
 fi
-if [[ -n "${TESSDATA}" ]]; then
-  args+=('--tesseractdata' "${TESSDATA}")
-else
-  args+=('--tesseractdata' '/tessdata')
-fi
+args+=('--tesseractdata' "${TESSDATA_DIR}")
 
 args+=('--tesseractversion' '5')
   
