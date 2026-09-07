@@ -27,6 +27,7 @@ ENV OUTPUT=/output.srt
 
 RUN apt-get update && \
     apt-get install -y \
+        curl \
         libtesseract5 \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -34,7 +35,10 @@ RUN apt-get update && \
 VOLUME /tessdata
 
 COPY --from=builder /src/PgsToSrt/out .
-COPY ${TESSDATA_DIR} /tessdata
+COPY ${TESSDATA_DIR} /tmp/tessdata
+RUN mkdir -p /tessdata && \
+    find /tmp/tessdata -maxdepth 1 -name '*.traineddata' -exec cp -t /tessdata {} + ; \
+    rm -rf /tmp/tessdata
 COPY ./src/entrypoint.sh /entrypoint.sh
 
 # Docker for Windows: EOL must be LF.

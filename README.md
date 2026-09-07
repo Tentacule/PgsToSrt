@@ -38,11 +38,23 @@ dotnet PgsToSrt.dll --input video1.mkv --output video1.srt --track 4
 
 Examime `entrypoint.sh` for a full list of all available arguments.
 
-The docker image bakes in whichever tessdata was present in `TESSDATA_DIR` at build time (see [Build](#build)). You only need `-v` to override it with a different `/tessdata` at runtime.
+The docker image bakes in whichever tessdata was present in `TESSDATA_DIR` at build time (see [Build](#build)). If the requested `LANGUAGE` isn't already in `/tessdata`, the entrypoint downloads it automatically at runtime.
 
 ``` sh
 docker run -it --rm \
     -v /path/to/videos:/data \
+    -e INPUT=/data/movie.sup \
+    -e OUTPUT=/data/movie.srt \
+    -e LANGUAGE=eng \
+    tentacule/pgstosrt
+```
+
+`/tessdata` is a Docker volume: without `-v` for it, Docker creates a fresh anonymous volume on every run, which is deleted afterwards with `--rm` — so the auto-download above happens again on every run. Mount a host folder onto `/tessdata` to keep downloaded languages between runs (or to supply your own instead of relying on the auto-download):
+
+``` sh
+docker run -it --rm \
+    -v /path/to/videos:/data \
+    -v /path/to/tessdata:/tessdata \
     -e INPUT=/data/movie.sup \
     -e OUTPUT=/data/movie.srt \
     -e LANGUAGE=eng \
