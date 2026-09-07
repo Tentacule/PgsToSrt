@@ -21,7 +21,7 @@ RUN cd /src && \
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 ARG TESSDATA_DIR=tessdata
 WORKDIR /app
-ENV LANGUAGE=eng
+ENV LANGUAGE=
 ENV INPUT=/input.sup
 ENV OUTPUT=/output.srt
 

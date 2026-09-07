@@ -42,20 +42,9 @@ The docker image bakes in whichever tessdata was present in `TESSDATA_DIR` at bu
 
 ``` sh
 docker run -it --rm \
-    -v /data:/data \
-    -e INPUT=/data/myImageSubtitle.sup \
-    -e OUTPUT=/data/myTextSubtitle.srt \
-    -e LANGUAGE=eng \
-    tentacule/pgstosrt
-```
-
-Hint: The default arguments coming from `Dockerfile` are `INPUT=/input.sup` and `OUTPUT=/output.srt`, so you can easily:
-
-``` sh
-touch output-file.srt  # This needs to be a file, otherwise Docker will just assume it's a directory mount and it will fail.
-docker run --it -rm \
-    -v source-file.sup:/input.sup \
-    -v output-file.srt:/output.srt \
+    -v /path/to/videos:/data \
+    -e INPUT=/data/movie.sup \
+    -e OUTPUT=/data/movie.srt \
     -e LANGUAGE=eng \
     tentacule/pgstosrt
 ```
@@ -71,7 +60,7 @@ To build PgsToSrt.dll execute the following commands in the `src/` directory:
 
 ``` sh
 dotnet restore
-dotnet publish -c Release -o out --framework net6.0
+dotnet publish -c Release -o out --framework net8.0
 # The file produced is  PgsToSrt/out/PgsToSrt.dll
 ```
 
