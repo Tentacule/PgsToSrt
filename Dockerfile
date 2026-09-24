@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 
 RUN apt-get -y update && \
@@ -27,15 +28,21 @@ ENV OUTPUT=/output.srt
 
 RUN apt-get update && \
     apt-get install -y \
+        curl \
         libtesseract5 \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-VOLUME /tessdata
-
 COPY --from=builder /src/PgsToSrt/out .
-COPY ${TESSDATA_DIR} /tessdata
+# Bake in any *.traineddata found in TESSDATA_DIR; the directory is optional (absent in CI).
+RUN --mount=type=bind,target=/context \
+    mkdir -p /tessdata && \
+    if [ -d "/context/${TESSDATA_DIR}" ]; then \
+      find "/context/${TESSDATA_DIR}" -maxdepth 1 -name '*.traineddata' -exec cp -t /tessdata {} + ; \
+    fi
 COPY ./src/entrypoint.sh /entrypoint.sh
+
+VOLUME /tessdata
 
 # Docker for Windows: EOL must be LF.
 ENTRYPOINT ["/entrypoint.sh"]

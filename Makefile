@@ -57,6 +57,7 @@ tessdata:
 
 ## Build the docker image, baking in the tessdata found in TESSDATA_DIR (options: TESSDATA_DIR=tessdata)
 build:
+	mkdir -p $(TESSDATA_DIR)
 	docker build . \
 		--file Dockerfile \
 		--tag $(REPOSITORY):$(TAG_ALL) \
