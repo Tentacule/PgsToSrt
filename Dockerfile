@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 
 RUN apt-get -y update && \
@@ -32,14 +33,16 @@ RUN apt-get update && \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-VOLUME /tessdata
-
 COPY --from=builder /src/PgsToSrt/out .
-COPY ${TESSDATA_DIR} /tmp/tessdata
-RUN mkdir -p /tessdata && \
-    find /tmp/tessdata -maxdepth 1 -name '*.traineddata' -exec cp -t /tessdata {} + ; \
-    rm -rf /tmp/tessdata
+# Bake in any *.traineddata found in TESSDATA_DIR; the directory is optional (absent in CI).
+RUN --mount=type=bind,target=/context \
+    mkdir -p /tessdata && \
+    if [ -d "/context/${TESSDATA_DIR}" ]; then \
+      find "/context/${TESSDATA_DIR}" -maxdepth 1 -name '*.traineddata' -exec cp -t /tessdata {} + ; \
+    fi
 COPY ./src/entrypoint.sh /entrypoint.sh
+
+VOLUME /tessdata
 
 # Docker for Windows: EOL must be LF.
 ENTRYPOINT ["/entrypoint.sh"]
